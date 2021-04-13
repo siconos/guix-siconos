@@ -87,10 +87,10 @@
   #:use-module (ice-9 match)
   #:use-module (srfi srfi-1))
 
-; modified version with python support
-(define-public vtk
+; modified vtk version with python support
+(define-public python-vtk
   (package
-    (name "vtk")
+    (name "python-vtk")
     (version "9.0.1")
     (source (origin
               (method url-fetch)
@@ -198,10 +198,10 @@ integrates with various databases on GUI toolkits such as Qt and Tk.")
     (license license:bsd-3)))
 
 
-; with python support
-(define-public vtk-8-2.0
+; vtk with python support
+(define-public python-vtk-8-2.0
   (package
-    (name "vtk")
+    (name "python-vtk")
     (version "8.2.0")
     (source (origin
               (method url-fetch)
