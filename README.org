@@ -1,0 +1,1 @@
+A guix channel for siconos

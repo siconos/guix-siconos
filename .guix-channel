@@ -1,0 +1,3 @@
+; -*- Scheme -*-
+(channel
+ (version 0))
