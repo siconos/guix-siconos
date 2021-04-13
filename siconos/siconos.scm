@@ -238,7 +238,7 @@ enable highly dynamic and modular programming of any CAD application.")
     `(("blas" ,openblas)
       ("python" ,python)
       ("gmsh" ,gmsh)
-      ("mumps" ,mumps-so)
+      ("mumps" ,mumps)
       ("siconos" ,siconos)
       ("numpy" ,python-numpy)))
    (arguments
