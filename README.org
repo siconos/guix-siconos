@@ -1,1 +1,22 @@
-A guix channel for siconos
+This is a [[https://guix.gnu.org/][Guix]] channel for [[https://nonsmooth.gricad-pages.univ-grenoble-alpes.fr/siconos/index][Siconos]]
+
+* Usage
+
+  [[https://guix.gnu.org/manual/en/html_node/Channels.html][Guix channels]] must be specified in files : 
+
+  - the file =$HOME/.config/guix/channel.scm= is a specification for
+    the main profile =$HOME/.guix-profile= and does not need option on
+    guix command line,
+
+  - any file <filename> may be used as a specification with Guix
+    options =-C <filename>= or =--channel=<filename>=.
+
+  To use the latest version of guix-siconos channel with the default guix channel, one has to use
+  a specification like this
+
+#+begin_src scheme
+  (cons
+   (channel (name 'guix-siconos)
+            (url "https://gitlab.inria.fr/bremond/guix-siconos"))
+   %default-channels)
+#+end_src
