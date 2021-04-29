@@ -4,19 +4,40 @@ This is a [[https://guix.gnu.org/][Guix]] channel for [[https://nonsmooth.gricad
 
   [[https://guix.gnu.org/manual/en/html_node/Channels.html][Guix channels]] must be specified in files : 
 
-  - the file =$HOME/.config/guix/channel.scm= is a specification for
-    the main profile =$HOME/.guix-profile= and does not need option on
-    guix command line,
+  - the file =$HOME/.config/guix/channel.scm= is the main specification
+    and is taken as default without option on the command line,
 
-  - any file <filename> may be used as a specification with Guix
+  - any file =<filename>= may be used as a specification with Guix
     options =-C <filename>= or =--channel=<filename>=.
 
   To use the latest version of guix-siconos channel with the default guix channel, one has to use
   a specification like this
 
-#+begin_src scheme
+#+begin_src scheme :
   (cons
    (channel (name 'guix-siconos)
             (url "https://gitlab.inria.fr/bremond/guix-siconos"))
    %default-channels)
 #+end_src
+
+#+RESULTS:
+
+* Examples
+
+** a cube falling on the ground
+
+#+begin_src sh :dir /tmp :compile
+  wget -N https://gitlab.inria.fr/bremond/guix-siconos/raw/doc-and-examples/channels/default.scm && \
+  wget -N https://gricad-gitlab.univ-grenoble-alpes.fr/nonsmooth/siconos-tutorials/raw/master/examples/mechanics/GeometricPrimitives/cube.py && \
+  guix time-machine -C default.scm -- \
+       environment  python-packaging --pure --ad-hoc python-numpy python-scipy python-h5py siconos-seq -- \
+       siconos cube.py
+#+end_src
+
+#+begin_src sh :dir /tmp :compile
+  wget -N https://gitlab.inria.fr/bremond/guix-siconos/raw/doc-and-examples/channels/default.scm && \
+  guix time-machine -C default.scm -- \
+       environment  python-packaging --pure --ad-hoc python-numpy python-scipy python-h5py python-vtk@8.2.0 siconos-seq -- \
+       siconos_vview cube.hdf5
+#+end_src
+
