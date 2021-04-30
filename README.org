@@ -20,23 +20,35 @@ This is a [[https://guix.gnu.org/][Guix]] channel for [[https://nonsmooth.gricad
    %default-channels)
 #+end_src
 
-#+RESULTS:
+** How to get a reproductible channel specification from the default channel and the most up to date guix channel
+
+#+name: fix-channels
+#+begin_src sh :var date=current-date :dir /tmp :results raw
+  wget -q -N https://gitlab.inria.fr/bremond/guix-siconos/raw/doc-and-examples/channels/default.scm && \
+    guix time-machine  -C default.scm -- describe -f channels 2>/dev/null > siconos-$(date --iso-8601).scm
+#+end_src
+
+#+RESULTS: fix-channels
 
 * Examples
 
 ** a cube falling on the ground
 
+*** computation
+
 #+begin_src sh :dir /tmp :compile
-  wget -N https://gitlab.inria.fr/bremond/guix-siconos/raw/doc-and-examples/channels/default.scm && \
+  wget -N https://gitlab.inria.fr/bremond/guix-siconos/raw/doc-and-examples/channels/siconos-2021-04-30.scm && \
   wget -N https://gricad-gitlab.univ-grenoble-alpes.fr/nonsmooth/siconos-tutorials/raw/master/examples/mechanics/GeometricPrimitives/cube.py && \
-  guix time-machine -C default.scm -- \
+  guix time-machine -C siconos-2021-04-30.scm -- \
        environment  python-packaging --pure --ad-hoc python-numpy python-scipy python-h5py siconos-seq -- \
        siconos cube.py
 #+end_src
 
+*** visualization
+
 #+begin_src sh :dir /tmp :compile
-  wget -N https://gitlab.inria.fr/bremond/guix-siconos/raw/doc-and-examples/channels/default.scm && \
-  guix time-machine -C default.scm -- \
+  wget -N https://gitlab.inria.fr/bremond/guix-siconos/raw/doc-and-examples/channels/siconos-2021-04-30.scm && \
+  guix time-machine -C siconos-2021-04-30.scm -- \
        environment  python-packaging --pure --ad-hoc python-numpy python-scipy python-h5py python-vtk@8.2.0 siconos-seq -- \
        siconos_vview cube.hdf5
 #+end_src
