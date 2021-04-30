@@ -85,6 +85,58 @@ problems.")
     (license license:asl2.0) ; Apache 2.0
     ))
 
+(define-public siconos-tutorials
+  (package
+    (name "siconos-tutorials")
+    (version "4.3.0")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append
+             "https://github.com/siconos/siconos-tutorials/archive/"
+             version ".tar.gz"))
+       (sha256 (base32
+                "1ysaqchiafbaz285pr6rbhaba5k3skb8lgva23y0zy3dgjqj5fcc"))))
+    (build-system trivial-build-system)
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder
+       (begin
+         (use-modules (guix build utils))
+         (let* ((source (assoc-ref %build-inputs "source"))
+                (out (assoc-ref %outputs "out"))
+                (out-t (string-append out "/share/siconos/siconos-tutorials"))
+                (tar (assoc-ref %build-inputs "tar"))
+                (gzip  (assoc-ref %build-inputs "gzip")))
+           (setenv "PATH" (string-append tar "/bin:" gzip "/bin"))
+           (invoke "tar" "zxvf" source)
+           (mkdir-p out-t)
+           (copy-recursively (string-append "siconos-tutorials-" ,version)
+                             out-t)))))
+    (native-inputs
+     `(("source" ,source)
+       ("tar" ,tar)
+       ("gzip" ,gzip)))
+    (home-page "https://github.com/siconos/siconos-tutorials")
+    (synopsis "Library for nonsmooth numerical simulation - Examples")
+    (description
+     "Siconos is an open-source scientific software primarily targeted at
+modeling and simulating nonsmooth dynamical systems in C++ and in Python:
+Mechanical systems (rigid or solid) with unilateral contact and Coulomb
+friction and impact (nonsmooth mechanics, contact dynamics, multibody systems
+dynamics or granular materials).  Switched Electrical Circuit such as
+electrical circuits with ideal and piecewise linear components: power
+converter, rectifier, Phase-Locked Loop (PLL) or Analog-to-Digital converter.
+Sliding mode control systems.  Biology (Gene regulatory network).
+
+Other applications are found in Systems and Control (hybrid systems,
+differential inclusions, optimal control with state constraints),
+Optimization (Complementarity systems and Variational inequalities), Fluid
+Mechanics, and Computer Graphics.")
+    (license license:asl2.0) ; Apache 2.0
+    ))
+
+
 (define-public siconos
   (package
     (name "siconos")
