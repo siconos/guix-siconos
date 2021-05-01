@@ -1,17 +1,10 @@
-This is a [[https://guix.gnu.org/][Guix]] channel for [[https://nonsmooth.gricad-pages.univ-grenoble-alpes.fr/siconos/index][Siconos]]
+This is a [[https://guix.gnu.org/][Guix]] channel for [[https://nonsmooth.gricad-pages.univ-grenoble-alpes.fr/siconos/index][Siconos]].
+
+See [[https://guix.gnu.org/manual/en/html_node/Channels.html][Guix channels]] for more informations.
 
 * Usage
 
-  [[https://guix.gnu.org/manual/en/html_node/Channels.html][Guix channels]] must be specified in files : 
-
-  - the file =$HOME/.config/guix/channel.scm= is the main specification
-    and is taken as default without option on the command line,
-
-  - any file =<filename>= may be used as a specification with Guix
-    options =-C <filename>= or =--channel=<filename>=.
-
-  To use the latest version of guix-siconos channel with the default guix channel, one has to use
-  a specification like this
+** The specification without contraints on channels versions is :
 
 #+begin_src scheme :
   (cons
@@ -20,22 +13,67 @@ This is a [[https://guix.gnu.org/][Guix]] channel for [[https://nonsmooth.gricad
    %default-channels)
 #+end_src
 
-** How to get a reproductible channel specification from the default channel and the most up to date guix channel
+** How to get the channels specificationss from this repository
 
-#+name: fix-channels
-#+begin_src sh :var date=current-date :dir /tmp :results raw
-  wget -q -N https://gitlab.inria.fr/bremond/guix-siconos/raw/doc-and-examples/channels/default.scm && \
+Channels are available in the channel branch of this repository.
+They are named with this convention:
+
+ - without commits constraints, the channels file is named =siconos-now.scm=
+ - with commits : =siconos-<iso 8601 date of commits>.scm=
+
+With git access to gitlab.inria.fr, the specification without
+constraint can be downloaded with this command:
+
+#+begin_src sh :dir /tmp :results raw :compile
+  git archive --remote=ssh://git@gitlab.inria.fr/bremond/guix-siconos.git channels siconos-now.scm | tar -x
+#+end_src
+
+Without git access, one can rely on gitlab convention for repositories and use wget:
+
+#+begin_src sh :dir /tmp :results raw :compile
+  wget -q -N https://gitlab.inria.fr/bremond/guix-siconos/raw/channels/siconos-now.scm
+#+end_src
+
+
+** How to form a reproductible specification:
+
+#+name: fix-channels-with-git
+#+begin_src sh :dir /tmp :results raw :compile
+  git archive --remote=ssh://git@gitlab.inria.fr/bremond/guix-siconos.git channels siconos-now.scm | tar -x && \
+    guix time-machine  -C siconos-latest.scm -- describe -f channels 2>/dev/null > siconos-$(date --iso-8601).scm
+#+end_src
+
+Or
+
+#+name: fix-channels-with-wget
+#+begin_src sh :dir /tmp :results raw :compile
+  wget -q -N https://gitlab.inria.fr/bremond/guix-siconos/raw/channels/siconos-now.scm && \
     guix time-machine  -C default.scm -- describe -f channels 2>/dev/null > siconos-$(date --iso-8601).scm
 #+end_src
 
-#+RESULTS: fix-channels
-
 * Examples
 
-** a cube falling on the ground
+** The bouncing ball
 
-*** computation
+Here is the siconos bouncing ball example:
 
+#+name: bouncing-ball-computation
+#+begin_src sh :dir /tmp :compile :file bouncing-ball-computation
+  wget -N https://gitlab.inria.fr/bremond/guix-siconos/raw/channels/siconos-2021-05-01.scm && \
+        guix time-machine -C siconos-2021-05-01.scm -- \
+             environment --container -N python-packaging \
+             --pure --ad-hoc gcc-toolchain openblas lapack hdf5 boost cmake make gmp fclib \
+             siconos-seq siconos-tutorials dash -- \
+             dash -c '
+  cp ${GUIX_ENVIRONMENT}/share/siconos/siconos-tutorials/examples/mechanics/BouncingBall/BouncingBallTS.ref .
+  siconos ${GUIX_ENVIRONMENT}/share/siconos/siconos-tutorials/examples/mechanics/BouncingBall/BouncingBallTS.cpp'
+#+end_src
+
+** A cube falling on the ground
+
+*** Computation
+
+#+name: cube-computation
 #+begin_src sh :dir /tmp :compile
   wget -N https://gitlab.inria.fr/bremond/guix-siconos/raw/doc-and-examples/channels/siconos-2021-04-30.scm && \
   wget -N https://gricad-gitlab.univ-grenoble-alpes.fr/nonsmooth/siconos-tutorials/raw/master/examples/mechanics/GeometricPrimitives/cube.py && \
@@ -44,8 +82,9 @@ This is a [[https://guix.gnu.org/][Guix]] channel for [[https://nonsmooth.gricad
        siconos cube.py
 #+end_src
 
-*** visualization
+*** Visualization
 
+#+name: cube-visualization
 #+begin_src sh :dir /tmp :compile
   wget -N https://gitlab.inria.fr/bremond/guix-siconos/raw/doc-and-examples/channels/siconos-2021-04-30.scm && \
   guix time-machine -C siconos-2021-04-30.scm -- \
