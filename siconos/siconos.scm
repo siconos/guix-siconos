@@ -15,6 +15,7 @@
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix build rpath)
   #:use-module (gnu packages)
+  #:use-module (gnu packages check)
   #:use-module (gnu packages gawk)
   #:use-module (gnu packages bash)
   #:use-module (gnu packages tls)
@@ -52,7 +53,7 @@
   #:use-module (gnu packages xiph)
   #:use-module (gnu packages game-development))
 
-(define-public fclib
+(define-public fclib-3.0
   (package
     (name "fclib")
     (version "3.0.0")
@@ -85,7 +86,9 @@ problems.")
     (license license:asl2.0) ; Apache 2.0
     ))
 
-(define-public siconos-tutorials
+(define-public fclib fclib-3.0)
+
+(define-public siconos-tutorials-4.3
   (package
     (name "siconos-tutorials")
     (version "4.3.0")
@@ -137,7 +140,9 @@ Mechanics, and Computer Graphics.")
     ))
 
 
-(define-public siconos
+(define-public siconos-tutorials siconos-tutorials-4.3)
+
+(define-public siconos-4.3
   (package
     (name "siconos")
     (version "4.3.1")
@@ -154,8 +159,6 @@ Mechanics, and Computer Graphics.")
      '(#:configure-flags '("-DCMAKE_VERBOSE_MAKEFILE=ON"
                            "-DWITH_BULLET=ON"
                            "-DWITH_OCE=ON"
-                           "-DWITH_MPI=ON"
-                           "-DWITH_MUMPS=ON"
                            "-DWITH_FCLIB=ON"
                            "-DWITH_SYSTEM_SUITESPARSE=ON")
                          #:tests? #f))                              ;XXX: no "test" target
@@ -165,26 +168,24 @@ Mechanics, and Computer Graphics.")
        ("gcc" ,gcc)
        ("gfortran" ,gfortran)
        ("gnu-make" ,gnu-make)
-       ("cmake" ,cmake)))
+       ("cmake" ,cmake)
+       ("python-pytest" ,python-pytest)))
     (inputs
-     `(("mumps-openmpi" ,mumps-openmpi)
-       ("mpi" ,openmpi)
-       ("openblas" ,openblas)
-       ("lapack" ,lapack)
-       ("suitesparse" ,suitesparse)
-       ("gmp" ,gmp)
-       ("fclib" ,fclib)
-       ("boost" ,boost)
-       ("python" ,python)
-       ("opencascade-oce" ,opencascade-oce)
+     `(("python" ,python)))
+    (propagated-inputs
+     `(("boost" ,boost)
        ("bullet" ,bullet)
-       ("python" ,python)
-       ("python-lxml"  ,python-lxml)
+       ("fclib" ,fclib)
+       ("gmp" ,gmp)
+       ("lapack" ,lapack)
+       ("openblas" ,openblas)
+       ("opencascade-oce" ,opencascade-oce)
        ("python-h5py"  ,python-h5py)
+       ("python-lxml"  ,python-lxml)
        ("python-numpy" ,python-numpy)
        ("python-packaging" ,python-packaging)
        ("python-scipy" ,python-scipy)
-       ("python-mpi4py" ,python-mpi4py)))
+       ("suitesparse" ,suitesparse)))
     (home-page "https://nonsmooth.gricad-pages.univ-grenoble-alpes.fr/siconos/index.html")
     (synopsis "Library for nonsmooth numerical simulation")
     (description
@@ -204,24 +205,78 @@ Mechanics, and Computer Graphics.")
     (license license:asl2.0) ; Apache 2.0
     ))
 
-; without mumps and mpi
-(define-public siconos-seq
+; with mumps and mpi
+(define-public siconos-mpi-4.3
   (package
-    (inherit siconos)
-    (name "siconos-seq")
-    (inputs `(,@(fold alist-delete (package-inputs siconos)
-                      '("mumps-openmpi" "mpi" "python-mpi4py"))))
+    (inherit siconos-4.3)
+    (name "siconos-mpi")
+    (synopsis "Library for nonsmooth numerical simulation - with MUMPS solver and MPI")
+    (propagated-inputs
+     `(("mpi" ,mpi)
+       ("mumps-openmpi" ,mumps-openmpi)
+       ("python-mpi4py" ,python-mpi4py)
+       ,@(package-propagated-inputs siconos-4.3)))
     (arguments
-     '(#:configure-flags '("-DCMAKE_VERBOSE_MAKEFILE=ON"
-                           "-DWITH_BULLET=ON"
-                           "-DWITH_OCE=ON"
-                           "-DWITH_MPI=OFF"
-                           "-DWITH_MUMPS=OFF"
-                           "-DWITH_FCLIB=ON"
-                           "-DWITH_SYSTEM_SUITESPARSE=ON")
-                         #:tests? #f))))                              ;XXX: no "test" target
+     `(#:configure-flags `("-DWITH_MPI=ON"
+                           "-DWITH_MUMPS=ON" ,@configure-flags)
+       #:tests? #f))))                              ;XXX: no "test" target
+
+(define-public siconos-4.4-rc2
+  (package
+    (inherit siconos-4.3)
+    (version "4.4.0.rc2")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append
+             "https://github.com/siconos/siconos/archive/"
+             version ".tar.gz"))
+       (sha256 (base32
+                "18z8bcl2b4l2iaw9f3hgafxsid8kyn5vdm07fl53whl3jac4xaca"))))))
+
+(define-public siconos-4.4-rc3
+  (package
+    (inherit siconos-4.4-rc2)
+    (version "4.4.0.rc3")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append
+             "https://github.com/siconos/siconos/archive/"
+             version ".tar.gz"))
+       (sha256 (base32
+                "148fwppjj7rdiqrgapbm9rg4k60d8xm9q4fc3757fp236nv8bxip"))))))
+
+(define-public siconos-mpi-4.4-rc2
+  (package
+    (inherit siconos-mpi-4.3)
+    (version "4.4.0.rc2")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append
+             "https://github.com/siconos/siconos/archive/"
+             version ".tar.gz"))
+       (sha256 (base32
+                "18z8bcl2b4l2iaw9f3hgafxsid8kyn5vdm07fl53whl3jac4xaca"))))))
 
 
+(define-public siconos-mpi-4.4-rc3
+  (package
+    (inherit siconos-mpi-4.4-rc2)
+    (version "4.4.0.rc3")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append
+             "https://github.com/siconos/siconos/archive/"
+             version ".tar.gz"))
+       (sha256 (base32
+                "148fwppjj7rdiqrgapbm9rg4k60d8xm9q4fc3757fp236nv8bxip"))))))
+
+(define-public siconos siconos-4.4-rc3)
+
+(define-public siconos-mpi siconos-mpi-4.4-rc3)
 
 (define-public pythonocc
   (package
