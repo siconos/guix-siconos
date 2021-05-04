@@ -212,7 +212,7 @@ Mechanics, and Computer Graphics.")
     (name "siconos-mpi")
     (synopsis "Library for nonsmooth numerical simulation - with MUMPS solver and MPI")
     (propagated-inputs
-     `(("mpi" ,mpi)
+     `(("mpi" ,openmpi)
        ("mumps-openmpi" ,mumps-openmpi)
        ("python-mpi4py" ,python-mpi4py)
        ,@(package-propagated-inputs siconos-4.3)))
