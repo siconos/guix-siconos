@@ -25,12 +25,7 @@ Example with constraints on Siconos channel and Guix channel:
         (name 'guix)
         (url "https://git.savannah.gnu.org/git/guix.git")
         (commit
-          "f0eb053dac8273416ab24541b85617d79dbae134")
-        (introduction
-          (make-channel-introduction
-            "9edb3f66fd807b096b48283debdcddccfea34bad"
-            (openpgp-fingerprint
-              "BBB0 2DDF 2CEA F6A8 0D1D  E643 A2A0 6DF2 A33A 54FA")))))
+          "f0eb053dac8273416ab24541b85617d79dbae134")))
 #+end_src
 
 * Specifications download
@@ -43,7 +38,7 @@ They are named with this convention:
    and Guix channel: =siconos-<iso 8601 date of commits>.scm=
 
 With git access to gitlab.inria.fr, the specification without
-constraint can be downloaded with this command:
+constraint may be downloaded with this command:
 
 #+begin_src sh :dir /tmp :results raw :compile
   git archive --remote=ssh://git@gitlab.inria.fr/bremond/guix-siconos.git channels siconos-now.scm | tar -x
@@ -74,29 +69,29 @@ Or
 
 * Examples
 
-** Bouncing ball with reference check
+** The reproductible Bouncing ball with reference check
 
 #+name: bouncing-ball-computation
 #+begin_src sh :dir /tmp :compile :file bouncing-ball-computation :results output silent
-  wget -N https://gitlab.inria.fr/bremond/guix-siconos/raw/channels/siconos-2021-05-03.scm && \
-        guix time-machine -C siconos-2021-05-03.scm -- \
-             environment --container -N python-packaging \
-             --pure --ad-hoc gcc-toolchain openblas lapack hdf5 boost cmake make gmp fclib \
-             siconos-seq siconos-tutorials dash -- \
-             dash -c '
-  cp ${GUIX_ENVIRONMENT}/share/siconos/siconos-tutorials/examples/mechanics/BouncingBall/BouncingBallTS.ref .
-  siconos ${GUIX_ENVIRONMENT}/share/siconos/siconos-tutorials/examples/mechanics/BouncingBall/BouncingBallTS.cpp'
+  wget -N https://gitlab.inria.fr/bremond/guix-siconos/raw/channels/siconos-2021-05-05.scm && \
+        guix time-machine -C siconos-2021-05-05.scm -- \
+           environment \
+           --pure --ad-hoc gcc-toolchain cmake make coreutils grep dash \
+           siconos@4.3 siconos-tutorials -- \
+           dash -c '
+cp ${GUIX_ENVIRONMENT}/share/siconos/siconos-tutorials/examples/mechanics/BouncingBall/BouncingBallTS.ref .
+siconos ${GUIX_ENVIRONMENT}/share/siconos/siconos-tutorials/examples/mechanics/BouncingBall/BouncingBallTS.cpp'
 #+end_src
 
-** A cube falling on the ground
+** A reproductible experiment of a cube falling on the ground
 
 *** Computation
 
 #+name: cube-computation
 #+begin_src sh :dir /tmp :compile :results output silent
-  wget -N https://gitlab.inria.fr/bremond/guix-siconos/raw/channels/siconos-2021-05-03.scm && \
-  guix time-machine -C siconos-2021-05-03.scm -- \
-       environment  python-packaging --pure --ad-hoc python-numpy python-scipy python-h5py siconos-seq siconos-tutorials dash -- \
+  wget -N https://gitlab.inria.fr/bremond/guix-siconos/raw/channels/siconos-2021-05-05.scm && \
+  guix time-machine -C siconos-2021-05-05.scm -- \
+       environment --pure --ad-hoc siconos siconos-tutorials dash -- \
        dash -c 'siconos ${GUIX_ENVIRONMENT}/share/siconos/siconos-tutorials/examples/mechanics/GeometricPrimitives/cube.py'
 #+end_src
 
@@ -104,9 +99,8 @@ Or
 
 #+name: cube-visualization
 #+begin_src sh :dir /tmp :compile :results output silent
-  wget -N https://gitlab.inria.fr/bremond/guix-siconos/raw/channels/siconos-2021-04-30.scm && \
-  guix time-machine -C siconos-2021-04-30.scm -- \
-       environment  python-packaging --pure --ad-hoc python-numpy python-scipy python-h5py python-vtk@8.2.0 siconos-seq -- \
+  wget -N https://gitlab.inria.fr/bremond/guix-siconos/raw/channels/siconos-2021-05-05.scm && \
+  guix time-machine -C siconos-2021-05-05.scm -- \
+       environment  --pure --ad-hoc python-vtk@8.2.0 siconos -- \
        siconos_vview cube.hdf5
 #+end_src
-
