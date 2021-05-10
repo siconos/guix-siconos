@@ -3,5 +3,5 @@
 (cons
  (channel
   (name 'guix-siconos)
-  (url "https://gitlab.inria.fr/bremond/guix-siconos"))
+  (url "https://github.com/siconos/guix-siconos"))
  %default-channels)
