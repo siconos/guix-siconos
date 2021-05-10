@@ -64,13 +64,13 @@ They are named with this convention:
 #+name: bouncing-ball-computation
 #+begin_src sh :dir /tmp :compile :file bouncing-ball-computation :results output silent
   wget -q -N https://raw.githubusercontent.com/siconos/guix-siconos/channels/siconos-2021-05-05.scm && \
-        guix time-machine -C siconos-2021-05-05.scm -- \
-           environment \
-           --pure --ad-hoc gcc-toolchain cmake make coreutils grep dash \
-           siconos@4.3 siconos-tutorials -- \
-           dash -c '
-cp ${GUIX_ENVIRONMENT}/share/siconos/siconos-tutorials/examples/mechanics/BouncingBall/BouncingBallTS.ref .
-siconos ${GUIX_ENVIRONMENT}/share/siconos/siconos-tutorials/examples/mechanics/BouncingBall/BouncingBallTS.cpp'
+    guix time-machine -C siconos-2021-05-05.scm -- \
+         environment \
+         --pure --ad-hoc gcc-toolchain cmake make coreutils grep dash \
+         siconos@4.3 siconos-tutorials -- \
+         dash -c '
+  cp ${GUIX_ENVIRONMENT}/share/siconos/siconos-tutorials/examples/mechanics/BouncingBall/BouncingBallTS.ref .
+  siconos ${GUIX_ENVIRONMENT}/share/siconos/siconos-tutorials/examples/mechanics/BouncingBall/BouncingBallTS.cpp'
 #+end_src
 
 ** A reproductible experiment of a cube falling on the ground
@@ -82,7 +82,7 @@ siconos ${GUIX_ENVIRONMENT}/share/siconos/siconos-tutorials/examples/mechanics/B
   wget -N https://raw.githubusercontent.com/siconos/guix-siconos/channels/siconos-2021-05-05.scm && \
     guix time-machine -C siconos-2021-05-05.scm -- \
          environment --pure --ad-hoc siconos siconos-tutorials dash -- \
-       dash -c 'siconos ${GUIX_ENVIRONMENT}/share/siconos/siconos-tutorials/examples/mechanics/GeometricPrimitives/cube.py'
+         dash -c 'siconos ${GUIX_ENVIRONMENT}/share/siconos/siconos-tutorials/examples/mechanics/GeometricPrimitives/cube.py'
 #+end_src
 
 *** Visualization
@@ -90,7 +90,7 @@ siconos ${GUIX_ENVIRONMENT}/share/siconos/siconos-tutorials/examples/mechanics/B
 #+name: cube-visualization
 #+begin_src sh :dir /tmp :compile :results output silent
   wget -N https://raw.githubusercontent.com/siconos/guix-siconos/channels/siconos-2021-05-05.scm && \
-  guix time-machine -C siconos-2021-05-05.scm -- \
-       environment  --pure --ad-hoc python-vtk@8.2.0 siconos -- \
-       siconos_vview cube.hdf5
+    guix time-machine -C siconos-2021-05-05.scm -- \
+         environment  --pure --ad-hoc python-vtk@8.2.0 siconos -- \
+         siconos_vview cube.hdf5
 #+end_src
