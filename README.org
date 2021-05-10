@@ -4,21 +4,21 @@ See [[https://guix.gnu.org/manual/en/html_node/Channels.html][Guix channels]] fo
 
 * Usage
 
-Specification without constraints:
+** Specification without constraints:
 
 #+begin_src scheme :eval no :tangle siconos-now.scm
   (cons
    (channel (name 'guix-siconos)
-            (url "https://gitlab.inria.fr/bremond/guix-siconos"))
+            (url "https://github.com/siconos/guix-siconos"))
    %default-channels)
 #+end_src
 
-Example with constraints on Siconos channel and Guix channel:
+** Example with constraints on Siconos channel and Guix channel:
 
 #+begin_src scheme :eval no :tangle siconos-2021-05-03.scm
 (list (channel
         (name 'guix-siconos)
-        (url "https://gitlab.inria.fr/bremond/guix-siconos")
+        (url "https://github.com/siconos/guix-siconos")
         (commit
           "be544bc07cd256f8e14566e0bfb3d59828ea4f0e"))
       (channel
@@ -28,7 +28,9 @@ Example with constraints on Siconos channel and Guix channel:
           "f0eb053dac8273416ab24541b85617d79dbae134")))
 #+end_src
 
-* Specifications download
+* Specifications
+
+** Download
 
 Specifications are available in the channel branch of this repository.
 They are named with this convention:
@@ -37,33 +39,21 @@ They are named with this convention:
  - with constraints on commits with the same date for Siconos channel
    and Guix channel: =siconos-<iso 8601 date of commits>.scm=
 
-With git access to gitlab.inria.fr, the specification without
-constraint may be downloaded with this command:
 
-#+begin_src sh :dir /tmp :results raw :compile
-  git archive --remote=ssh://git@gitlab.inria.fr/bremond/guix-siconos.git channels siconos-now.scm | tar -x
+#+begin_src sh :dir /tmp :results value silent
+  wget -q -N https://raw.githubusercontent.com/siconos/guix-siconos/channels/siconos-now.scm
 #+end_src
 
-Without git access, one can rely on gitlab convention for repositories and use wget:
-
-#+begin_src sh :dir /tmp :results raw :compile
-  wget -q -N https://gitlab.inria.fr/bremond/guix-siconos/raw/channels/siconos-now.scm
+#+begin_src sh :dir /tmp :results value silent
+  wget -q -N https://raw.githubusercontent.com/siconos/guix-siconos/channels/siconos-2021-05-05.scm
 #+end_src
 
 
 ** How to form a reproductible specification:
 
-#+name: fix-channels-with-git
-#+begin_src sh :dir /tmp :results raw :compile :results output silent
-  git archive --remote=ssh://git@gitlab.inria.fr/bremond/guix-siconos.git channels siconos-now.scm | tar -x && \
-    guix time-machine  -C siconos-now.scm -- describe -f channels 2>/dev/null > siconos-$(date --iso-8601).scm
-#+end_src
-
-Or
-
 #+name: fix-channels-with-wget
 #+begin_src sh :dir /tmp :results raw :compile :results output silent
-  wget -q -N https://gitlab.inria.fr/bremond/guix-siconos/raw/channels/siconos-now.scm && \
+  wget -q -N https://raw.githubusercontent.com/siconos/guix-siconos/channels/siconos-now && \
     guix time-machine  -C siconos-now.scm -- describe -f channels 2>/dev/null > siconos-$(date --iso-8601).scm
 #+end_src
 
@@ -73,7 +63,7 @@ Or
 
 #+name: bouncing-ball-computation
 #+begin_src sh :dir /tmp :compile :file bouncing-ball-computation :results output silent
-  wget -N https://gitlab.inria.fr/bremond/guix-siconos/raw/channels/siconos-2021-05-05.scm && \
+  wget -q -N https://raw.githubusercontent.com/siconos/guix-siconos/channels/siconos-2021-05-05.scm && \
         guix time-machine -C siconos-2021-05-05.scm -- \
            environment \
            --pure --ad-hoc gcc-toolchain cmake make coreutils grep dash \
@@ -89,9 +79,9 @@ siconos ${GUIX_ENVIRONMENT}/share/siconos/siconos-tutorials/examples/mechanics/B
 
 #+name: cube-computation
 #+begin_src sh :dir /tmp :compile :results output silent
-  wget -N https://gitlab.inria.fr/bremond/guix-siconos/raw/channels/siconos-2021-05-05.scm && \
-  guix time-machine -C siconos-2021-05-05.scm -- \
-       environment --pure --ad-hoc siconos siconos-tutorials dash -- \
+  wget -N https://raw.githubusercontent.com/siconos/guix-siconos/channels/siconos-2021-05-05.scm && \
+    guix time-machine -C siconos-2021-05-05.scm -- \
+         environment --pure --ad-hoc siconos siconos-tutorials dash -- \
        dash -c 'siconos ${GUIX_ENVIRONMENT}/share/siconos/siconos-tutorials/examples/mechanics/GeometricPrimitives/cube.py'
 #+end_src
 
@@ -99,7 +89,7 @@ siconos ${GUIX_ENVIRONMENT}/share/siconos/siconos-tutorials/examples/mechanics/B
 
 #+name: cube-visualization
 #+begin_src sh :dir /tmp :compile :results output silent
-  wget -N https://gitlab.inria.fr/bremond/guix-siconos/raw/channels/siconos-2021-05-05.scm && \
+  wget -N https://raw.githubusercontent.com/siconos/guix-siconos/channels/siconos-2021-05-05.scm && \
   guix time-machine -C siconos-2021-05-05.scm -- \
        environment  --pure --ad-hoc python-vtk@8.2.0 siconos -- \
        siconos_vview cube.hdf5
