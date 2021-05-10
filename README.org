@@ -53,7 +53,7 @@ They are named with this convention:
 
 #+name: fix-channels-with-wget
 #+begin_src sh :dir /tmp :results raw :compile :results output silent
-  wget -q -N https://raw.githubusercontent.com/siconos/guix-siconos/channels/siconos-now && \
+  wget -q -N https://raw.githubusercontent.com/siconos/guix-siconos/channels/siconos-now.scm && \
     guix time-machine  -C siconos-now.scm -- describe -f channels 2>/dev/null > siconos-$(date --iso-8601).scm
 #+end_src
 
