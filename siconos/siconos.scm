@@ -140,7 +140,30 @@ Mechanics, and Computer Graphics.")
     ))
 
 
-(define-public siconos-tutorials siconos-tutorials-4.3)
+(define-public siconos-tutorials
+  (package
+    (inherit siconos-tutorials-4.3)
+    (version "4.4")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/siconos/siconos-tutorials")
+             (commit "9144b28e370666b1999b0ad10970fd0510768cd7")))
+       (sha256 (base32
+                "0jdpwik01vjbw27i3hyazjn1fxjgd91rgy09inz46x6zpalhdnyk"))))
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder
+       (begin
+         (use-modules (guix build utils))
+         (let* ((source (assoc-ref %build-inputs "source"))
+                (out (assoc-ref %outputs "out"))
+                (out-t (string-append out "/share/siconos/siconos-tutorials")))
+           (mkdir-p out-t)
+           (copy-recursively source out-t)))))
+    (native-inputs
+     `(("source" ,source)))))
 
 (define-public siconos-4.3
   (package
@@ -404,4 +427,3 @@ cohesion...) or complex multiphysics coupling (fluid, thermal...)
    (description
     "A Python wrapper to Qhull (http://www.qhull.org/) for the computation of the convex hull, Delaunay triangulation and Voronoi diagram")
    (license license:expat)))
-
