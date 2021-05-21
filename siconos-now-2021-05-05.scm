@@ -1,6 +1,6 @@
 (list (channel
        (name 'guix-siconos)
-       (url "https://gitlab.inria.fr/bremond/guix-siconos"))
+       (url "https://github.com/siconos/guix-siconos"))
       (channel
        (name 'guix)
        (url "https://git.savannah.gnu.org/git/guix.git")
