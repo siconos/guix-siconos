@@ -368,7 +368,9 @@ enable highly dynamic and modular programming of any CAD application.")
           (lambda* (#:key outputs #:allow-other-keys)
             (let* ((out (assoc-ref outputs "out"))
                    (libdir (string-append out "/lib")))
-              (augment-rpath (string-append out "/lib/python3.7/site-packages/pylmgc90/chipy/_lmgc90.so") libdir)))))))
+              (augment-rpath (string-append out "/lib/python"
+                                            ,(version-major+minor
+                                              (package-version python)) "/site-packages/pylmgc90/chipy/_lmgc90.so") libdir)))))))
    (home-page "https://git-xen.lmgc.univ-montp2.fr/lmgc90/lmgc90_user/wikis/home")
    (synopsis "LMGC90 is a free and open source software dedicated to
 multiple physics simulation of discrete material and structures.")
