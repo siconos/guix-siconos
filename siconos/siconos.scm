@@ -51,7 +51,9 @@
   #:use-module (gnu packages image)
   #:use-module (gnu packages serialization)
   #:use-module (gnu packages xiph)
-  #:use-module (gnu packages game-development))
+  #:use-module (gnu packages game-development)
+  #:use-module (siconos boost)
+  #:use-module (siconos swig))
 
 (define-public fclib-3.0
   (package
@@ -140,7 +142,7 @@ Mechanics, and Computer Graphics.")
     ))
 
 
-(define-public siconos-tutorials
+(define-public siconos-tutorials-4.4
   (package
     (inherit siconos-tutorials-4.3)
     (version "4.4")
@@ -164,6 +166,21 @@ Mechanics, and Computer Graphics.")
            (copy-recursively source out-t)))))
     (native-inputs
      `(("source" ,source)))))
+
+(define-public siconos-tutorials-4.2
+  (package
+    (inherit siconos-tutorials-4.3)
+    (version "4.2")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/siconos/siconos-tutorials")
+             (commit "7e1322d1c51224970967e46408b81a84e81b18a8")))
+       (sha256 (base32
+                "0451cj8vx42zyrd1injcccw5sl5zz9f9afd54q3ax0h6d52q994x"))))))
+
+(define-public siconos-tutorials siconos-tutorials-4.4)
 
 (define-public siconos-4.3
   (package
@@ -243,6 +260,33 @@ Mechanics, and Computer Graphics.")
      `(#:configure-flags `("-DWITH_MPI=ON"
                            "-DWITH_MUMPS=ON" ,@configure-flags)
        #:tests? #f))))                              ;XXX: no "test" target
+
+
+(define-public siconos-4.2
+  (package
+   (inherit siconos-4.3)
+   (version "4.2.0")
+   (source
+    (origin
+     (method url-fetch)
+     (uri (string-append
+           "https://github.com/siconos/siconos/archive/"
+           version ".tar.gz"))
+     (sha256 (base32
+              "1gy15d8yzch0mmgy56mj9h22gbyh2k4m9y59q8p8dxy7aixqhfbv"))))
+   (native-inputs
+    `(("swig", swig-3.0.12)
+      ,@(alist-delete "swig" (package-native-inputs siconos))))
+   (propagated-inputs
+    `(("boost" ,boost-1.68.0)
+      ,@(alist-delete "boost" (package-propagated-inputs siconos))))
+   (arguments
+    `(#:configure-flags `("-DCMAKE_VERBOSE_MAKEFILE=ON"
+                           "-DWITH_BULLET=ON"
+                           "-DWITH_OCC=ON"
+                           "-DWITH_FCLIB=ON"
+                           "-DWITH_SYSTEM_SUITESPARSE=ON")
+      #:tests? #f))))
 
 (define-public siconos-4.4-rc2
   (package
@@ -427,3 +471,4 @@ cohesion...) or complex multiphysics coupling (fluid, thermal...)
    (description
     "A Python wrapper to Qhull (http://www.qhull.org/) for the computation of the convex hull, Delaunay triangulation and Voronoi diagram")
    (license license:expat)))
+
