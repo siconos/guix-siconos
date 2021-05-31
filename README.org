@@ -32,12 +32,14 @@ See [[https://guix.gnu.org/manual/en/html_node/Channels.html][Guix channels]] fo
 
 ** Download
 
-Specifications are available in the channel branch of this repository.
+Some specifications are available in the channel branch of this repository.
 They are named with this convention:
 
  - without constraints, the channels file is named =siconos-now.scm=
  - with constraints on commits with the same date for Siconos channel
    and Guix channel: =siconos-<iso 8601 date of commits>.scm=
+ - with different dates for Siconos channel and Guix channel:
+   =siconos-<iso 8601 date of siconos commits>-<iso 8601 date of Guix commits>.scm=
 
 
 #+begin_src sh :dir /tmp :results value silent
@@ -93,4 +95,47 @@ They are named with this convention:
     guix time-machine -C siconos-2021-05-05.scm -- \
          environment  --pure --ad-hoc python-vtk@8.2.0 siconos -- \
          siconos_vview cube.hdf5
+#+end_src
+y
+** Open Cascade contactors
+
+*** Computation
+
+A simple example of a double pendulum with Open Cascade
+contactors. The computation is done with a previous version of Siconos
+(=siconos@4.2=) and a specific commit on siconos-tutorials:
+
+#+name: occ_double_pendulum
+#+begin_src sh :dir /tmp :compile :results output silent
+  wget -N https://raw.githubusercontent.com/siconos/guix-siconos/channels/siconos-2021-05-31-2021-05-10.scm && \
+    guix time-machine -C siconos-2021-05-31-2021-05-10.scm -- \
+         environment --with-git-url=siconos-tutorials=https://github.com/siconos/siconos-tutorials \
+         --with-commit=siconos-tutorials=7e1322d1c51224970967e46408b81a84e81b18a8 \
+         --pure --ad-hoc siconos@4.2 siconos-tutorials python pythonocc dash -- \
+         dash -c 'siconos ${GUIX_ENVIRONMENT}/share/siconos/siconos-tutorials/examples/mechanics/MultiBodySystems/OCC_Examples/occ_double_pendulum.py'
+#+end_src
+
+*** Visualization
+
+#+name: double_pendulum_visualization
+#+begin_src sh :dir /tmp :compile :results output silent
+  wget -N https://raw.githubusercontent.com/siconos/guix-siconos/channels/siconos-2021-05-05.scm && \
+    guix time-machine -C siconos-2021-05-05.scm -- \
+         environment --pure --ad-hoc pythonocc python-vtk@8.2.0 siconos -- \
+         siconos_vview occ_double_pendulum.hdf5
+#+end_src
+
+
+* Siconos compilation with a guix environment
+
+The =siconos= package is placed *before* =--ad-hoc= option in order to
+provide the necessary =inputs= packages:
+
+#+name: siconos-build
+#+begin_src sh :dir /tmp :compile :results output silent
+  git clone --depth 1 https://github.com/siconos/siconos &&
+  wget -N https://raw.githubusercontent.com/siconos/guix-siconos/channels/siconos-2021-05-05.scm && \
+    guix time-machine -C siconos-2021-05-05.scm -- \
+       environment siconos --pure --ad-hoc dash -- \
+       dash -c 'mkdir -p siconos-build && cd siconos-build && cmake ../siconos && make -j8'
 #+end_src
