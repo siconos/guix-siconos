@@ -472,3 +472,25 @@ cohesion...) or complex multiphysics coupling (fluid, thermal...)
     "A Python wrapper to Qhull (http://www.qhull.org/) for the computation of the convex hull, Delaunay triangulation and Voronoi diagram")
    (license license:expat)))
 
+(define-public bullet-double-precision
+  (package
+    (inherit bullet)
+    (name "bullet-double-precision")
+    (arguments
+     (substitute-keyword-arguments (package-arguments bullet)
+       ((#:configure-flags flags)
+        `(cons "-DUSE_DOUBLE_PRECISION=ON" ,flags))))))
+
+
+;fix: can siconos package detect input bullet double precision ?
+(define-public siconos-bullet-double-precision
+  (package
+    (inherit siconos)
+    (name "siconos-bullet-double-precision")
+    (propagated-inputs
+     `(("bullet" ,bullet-double-precision)
+       ,@(package-propagated-inputs siconos)))
+    (arguments
+     (substitute-keyword-arguments (package-arguments siconos)
+       ((#:configure-flags flags)
+        `(cons "-DBULLET_USE_DOUBLE_PRECISION=ON" ,flags))))))
