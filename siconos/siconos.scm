@@ -10,7 +10,7 @@
   #:use-module (guix build-system python)
   #:use-module (guix build-system cmake)
   #:use-module (guix build-system gnu)
-  #:use-module (guix build-system trivial)
+  #:use-module (guix build-system copy)
   #:use-module (guix utils)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix build rpath)
@@ -90,38 +90,25 @@ problems.")
 
 (define-public fclib fclib-3.0)
 
-(define-public siconos-tutorials-4.3
+(define-public siconos-tutorials-4.4
   (package
     (name "siconos-tutorials")
-    (version "4.3.0")
+    (version "4.4")
     (source
      (origin
-       (method url-fetch)
-       (uri (string-append
-             "https://github.com/siconos/siconos-tutorials/archive/"
-             version ".tar.gz"))
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/siconos/siconos-tutorials")
+             (commit "9144b28e370666b1999b0ad10970fd0510768cd7")))
        (sha256 (base32
-                "1ysaqchiafbaz285pr6rbhaba5k3skb8lgva23y0zy3dgjqj5fcc"))))
-    (build-system trivial-build-system)
+                "0jdpwik01vjbw27i3hyazjn1fxjgd91rgy09inz46x6zpalhdnyk"))))
+    (build-system copy-build-system)
     (arguments
-     `(#:modules ((guix build utils))
-       #:builder
-       (begin
-         (use-modules (guix build utils))
-         (let* ((source (assoc-ref %build-inputs "source"))
-                (out (assoc-ref %outputs "out"))
-                (out-t (string-append out "/share/siconos/siconos-tutorials"))
-                (tar (assoc-ref %build-inputs "tar"))
-                (gzip  (assoc-ref %build-inputs "gzip")))
-           (setenv "PATH" (string-append tar "/bin:" gzip "/bin"))
-           (invoke "tar" "zxvf" source)
-           (mkdir-p out-t)
-           (copy-recursively (string-append "siconos-tutorials-" ,version)
-                             out-t)))))
-    (native-inputs
-     `(("source" ,source)
-       ("tar" ,tar)
-       ("gzip" ,gzip)))
+     '(#:install-plan
+       '(("." "/share/siconos/siconos-tutorials"))
+       #:phases
+       (modify-phases %standard-phases
+         (delete 'reset-gzip-timestamps))))
     (home-page "https://github.com/siconos/siconos-tutorials")
     (synopsis "Library for nonsmooth numerical simulation - Examples")
     (description
@@ -141,35 +128,22 @@ Mechanics, and Computer Graphics.")
     (license license:asl2.0) ; Apache 2.0
     ))
 
-
-(define-public siconos-tutorials-4.4
+(define-public siconos-tutorials-4.3
   (package
-    (inherit siconos-tutorials-4.3)
-    (version "4.4")
+    (inherit siconos-tutorials-4.4)
+    (version "4.3")
     (source
      (origin
        (method git-fetch)
        (uri (git-reference
              (url "https://github.com/siconos/siconos-tutorials")
-             (commit "9144b28e370666b1999b0ad10970fd0510768cd7")))
+             (commit "5fa67fa5fdb59734e38e704143d47ade98b8faef")))
        (sha256 (base32
-                "0jdpwik01vjbw27i3hyazjn1fxjgd91rgy09inz46x6zpalhdnyk"))))
-    (arguments
-     `(#:modules ((guix build utils))
-       #:builder
-       (begin
-         (use-modules (guix build utils))
-         (let* ((source (assoc-ref %build-inputs "source"))
-                (out (assoc-ref %outputs "out"))
-                (out-t (string-append out "/share/siconos/siconos-tutorials")))
-           (mkdir-p out-t)
-           (copy-recursively source out-t)))))
-    (native-inputs
-     `(("source" ,source)))))
+                "0m7ahrx1l5pb8j0qzym59523375lfbgyacibd24zk343k69vcsg0"))))))
 
 (define-public siconos-tutorials-4.2
   (package
-    (inherit siconos-tutorials-4.3)
+    (inherit siconos-tutorials-4.4)
     (version "4.2")
     (source
      (origin
