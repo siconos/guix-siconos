@@ -82,7 +82,7 @@ They are named with this convention:
 
 * Examples
 
-** The reproductible Bouncing ball with reference check
+** The reproductible c++ bouncing ball with reference check
 
 #+name: bouncing-ball-computation
 #+begin_src sh :dir /tmp :compile :file bouncing-ball-computation :results output silent
@@ -99,6 +99,24 @@ They are named with this convention:
   cp $bdir/BouncingBallTS.ref .
   siconos $bdir/BouncingBallTS.cpp'
 #+end_src
+
+** The python bouncing ball
+
+#+name: bouncing-ball-python-computation
+#+begin_src sh :dir /tmp :compile :results output silent
+  addr=https://raw.githubusercontent.com/siconos/guix-siconos &&
+  wget -N $addr/channels/siconos-2021-06-08.scm && \
+    guix time-machine -C siconos-2021-06-08.scm -- \
+       environment \
+       --pure --ad-hoc \
+       python python-numpy python-matplotlib python-packaging \
+       siconos siconos-tutorials dash -- \
+       dash -c '
+        tutorials=${GUIX_ENVIRONMENT}/share/siconos/siconos-tutorials
+        bdir=$tutorials/examples/mechanics/BouncingBall
+        siconos $bdir/BouncingBallTS.py'
+#+end_src
+
 
 ** A reproductible experiment of a cube falling on the ground
 
@@ -191,6 +209,8 @@ An example with transformations on =siconos-tutorials= and =siconos=
 
 *** with local sources
 
+To check code before commit, there is the =--with-source= option:
+
 #+name: siconos-master-build
 #+begin_src sh :dir /tmp :compile :results output silent
   git clone --depth 1 git@github.com:siconos/siconos &&
@@ -202,7 +222,12 @@ An example with transformations on =siconos-tutorials= and =siconos=
 #+end_src
 
 
-** Compilation with guix environment
+** Direct compilation with guix environment
+
+This may be needed for debug through gdb and when modifying by hand
+the installation is convenient. Otherwise, it is preferable to use the
+transformations on repositories described above as they can be
+included in scripts.
 
 
 *** usage of inputs of siconos package
@@ -227,8 +252,11 @@ provide the necessary =inputs= packages:
 
 *** the c++ bouncing ball
 
-The installed =siconos= script has not been patched to use guix installation so one need to call
-python from guix with =siconos= as argument:
+With an installation from a direct compilation, the shebang part of
+=siconos= script has not been replaced. It points to local system and
+not into the =/gnu/store=. To avoid the usage of the wrong python
+interpreter, it is necessary to call the =siconos= script with the
+=python3= executable of the =python= package:
 
 #+name: siconos-raw-build-bouncing-ball
 #+begin_src sh :dir /tmp :compile :results output silent
