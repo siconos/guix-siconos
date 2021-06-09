@@ -1,19 +1,37 @@
+#+title: Guix Siconos
+
+* Introduction
+
 This is a [[https://guix.gnu.org/][Guix]] channel for [[https://nonsmooth.gricad-pages.univ-grenoble-alpes.fr/siconos/index][Siconos]].
 
 See [[https://guix.gnu.org/manual/en/html_node/Channels.html][Guix channels]] for more informations.
 
 * Usage
 
-** Specification without constraints:
+** The channel file
 
-#+begin_src scheme :eval no :tangle siconos-now.scm
+- it must include the repository url:
+
+#+begin_src scheme :exports code :eval no :tangle siconos-now.scm
   (cons
    (channel (name 'guix-siconos)
-            (url "https://github.com/siconos/guix-siconos"))
+            (url "https://github.com/siconos/guix-siconos"))/
    %default-channels)
 #+end_src
 
-** Example with constraints on Siconos channel and Guix channel:
+ - some branch specification may be added:
+
+#+begin_src scheme :exports code :eval no :tangle siconos-now-guix-version-1-1-0.scm
+ (list (channel
+        (name 'guix-siconos)
+        (url "https://github.com/siconos/guix-siconos"))
+      (channel
+        (name 'guix)
+        (url "https://git.savannah.gnu.org/git/guix.git")
+        (branch "version-1.1.0")))
+#+end_src
+
+ - for reproductibility commits are necessary:
 
 #+begin_src scheme :eval no :tangle siconos-2021-05-03.scm
 (list (channel
@@ -28,9 +46,7 @@ See [[https://guix.gnu.org/manual/en/html_node/Channels.html][Guix channels]] fo
           "f0eb053dac8273416ab24541b85617d79dbae134")))
 #+end_src
 
-* Specifications
-
-** Download
+** Download of channel files
 
 Some specifications are available in the channel branch of this repository.
 They are named with this convention:
@@ -43,11 +59,13 @@ They are named with this convention:
 
 
 #+begin_src sh :dir /tmp :results value silent
-  wget -q -N https://raw.githubusercontent.com/siconos/guix-siconos/channels/siconos-now.scm
+  addr=https://raw.githubusercontent.com/siconos/guix-siconos
+  wget -q -N $addr/channels/siconos-now.scm
 #+end_src
 
 #+begin_src sh :dir /tmp :results value silent
-  wget -q -N https://raw.githubusercontent.com/siconos/guix-siconos/channels/siconos-2021-05-05.scm
+  addr=https://raw.githubusercontent.com/siconos/guix-siconos
+  wget -q -N $addr/channels/siconos-2021-05-05.scm
 #+end_src
 
 
@@ -55,8 +73,11 @@ They are named with this convention:
 
 #+name: fix-channels-with-wget
 #+begin_src sh :dir /tmp :results raw :compile :results output silent
-  wget -q -N https://raw.githubusercontent.com/siconos/guix-siconos/channels/siconos-now.scm && \
-    guix time-machine  -C siconos-now.scm -- describe -f channels 2>/dev/null > siconos-$(date --iso-8601).scm
+  addr=https://raw.githubusercontent.com/siconos/guix-siconos
+  wget -q -N $addr/channels/siconos-now.scm && \
+    guix time-machine  -C siconos-now.scm -- \
+         describe -f channels 2>/dev/null > \
+         siconos-$(date --iso-8601).scm
 #+end_src
 
 * Examples
@@ -65,41 +86,51 @@ They are named with this convention:
 
 #+name: bouncing-ball-computation
 #+begin_src sh :dir /tmp :compile :file bouncing-ball-computation :results output silent
-  wget -q -N https://raw.githubusercontent.com/siconos/guix-siconos/channels/siconos-2021-05-05.scm && \
-    guix time-machine -C siconos-2021-05-05.scm -- \
+  addr=https://raw.githubusercontent.com/siconos/guix-siconos &&
+  wget -q -N $addr/channels/siconos-2021-06-08.scm && \
+    guix time-machine -C siconos-2021-06-08.scm -- \
          environment \
-         --pure --ad-hoc gcc-toolchain cmake make coreutils grep dash \
-         siconos@4.3 siconos-tutorials -- \
+         --pure --ad-hoc gcc-toolchain cmake make \
+         coreutils grep dash \
+         siconos siconos-tutorials -- \
          dash -c '
-  cp ${GUIX_ENVIRONMENT}/share/siconos/siconos-tutorials/examples/mechanics/BouncingBall/BouncingBallTS.ref .
-  siconos ${GUIX_ENVIRONMENT}/share/siconos/siconos-tutorials/examples/mechanics/BouncingBall/BouncingBallTS.cpp'
+  tutorials=${GUIX_ENVIRONMENT}/share/siconos/siconos-tutorials
+  bdir=$tutorials/examples/mechanics/BouncingBall
+  cp $bdir/BouncingBallTS.ref .
+  siconos $bdir/BouncingBallTS.cpp'
 #+end_src
 
 ** A reproductible experiment of a cube falling on the ground
 
-*** Computation
+*** computation
 
 #+name: cube-computation
 #+begin_src sh :dir /tmp :compile :results output silent
-  wget -N https://raw.githubusercontent.com/siconos/guix-siconos/channels/siconos-2021-05-05.scm && \
+  addr=https://raw.githubusercontent.com/siconos/guix-siconos
+  wget -N $addr/channels/siconos-2021-05-05.scm && \
     guix time-machine -C siconos-2021-05-05.scm -- \
-         environment --pure --ad-hoc siconos siconos-tutorials dash -- \
-         dash -c 'siconos ${GUIX_ENVIRONMENT}/share/siconos/siconos-tutorials/examples/mechanics/GeometricPrimitives/cube.py'
+         environment --pure --ad-hoc \
+         siconos siconos-tutorials dash -- \
+         dash -c '
+  tutorials=${GUIX_ENVIRONMENT}/share/siconos/siconos-tutorials
+  siconos $tutorials/examples/mechanics/GeometricPrimitives/cube.py'
 #+end_src
 
-*** Visualization
+*** visualization
 
 #+name: cube-visualization
 #+begin_src sh :dir /tmp :compile :results output silent
-  wget -N https://raw.githubusercontent.com/siconos/guix-siconos/channels/siconos-2021-05-05.scm && \
+  addr=https://raw.githubusercontent.com/siconos/guix-siconos &&
+  wget -N $addr/channels/siconos-2021-05-05.scm && \
     guix time-machine -C siconos-2021-05-05.scm -- \
-         environment  --pure --ad-hoc python-vtk@8.2.0 siconos -- \
+         environment  --pure --ad-hoc \
+         python-vtk@8.2.0 siconos -- \
          siconos_vview cube.hdf5
 #+end_src
-y
+
 ** Open Cascade contactors
 
-*** Computation
+*** computation
 
 A simple example of a double pendulum with Open Cascade
 contactors. The computation is done with a previous version of Siconos
@@ -107,35 +138,157 @@ contactors. The computation is done with a previous version of Siconos
 
 #+name: occ_double_pendulum
 #+begin_src sh :dir /tmp :compile :results output silent
-  wget -N https://raw.githubusercontent.com/siconos/guix-siconos/channels/siconos-2021-05-31-2021-05-10.scm && \
+  addr=https://raw.githubusercontent.com/siconos/guix-siconos &&
+  wget -N $addr/channels/siconos-2021-05-31-2021-05-10.scm && \
     guix time-machine -C siconos-2021-05-31-2021-05-10.scm -- \
-         environment --with-git-url=siconos-tutorials=https://github.com/siconos/siconos-tutorials \
-         --with-commit=siconos-tutorials=7e1322d1c51224970967e46408b81a84e81b18a8 \
-         --pure --ad-hoc siconos@4.2 siconos-tutorials python pythonocc dash -- \
-         dash -c 'siconos ${GUIX_ENVIRONMENT}/share/siconos/siconos-tutorials/examples/mechanics/MultiBodySystems/OCC_Examples/occ_double_pendulum.py'
+         environment \
+  --with-git-url=siconos-tutorials=https://github.com/siconos/siconos-tutorials \
+  --with-commit=siconos-tutorials=7e1322d1c51224970967e46408b81a84e81b18a8 \
+         --pure --ad-hoc \
+         siconos@4.2 siconos-tutorials python pythonocc dash -- \
+         dash -c '
+  tutorials=${GUIX_ENVIRONMENT}/share/siconos/siconos-tutorials
+  siconos $tutorials/examples/mechanics/MultiBodySystems/OCC_Examples/occ_double_pendulum.py'
 #+end_src
 
-*** Visualization
+*** visualization
 
 #+name: double_pendulum_visualization
 #+begin_src sh :dir /tmp :compile :results output silent
-  wget -N https://raw.githubusercontent.com/siconos/guix-siconos/channels/siconos-2021-05-05.scm && \
+  addr=https://raw.githubusercontent.com/siconos/guix-siconos &&
+  wget -N $addr/channels/siconos-2021-05-05.scm && \
     guix time-machine -C siconos-2021-05-05.scm -- \
-         environment --pure --ad-hoc pythonocc python-vtk@8.2.0 siconos -- \
+         environment --pure --ad-hoc \
+         pythonocc python-vtk@8.2.0 siconos -- \
          siconos_vview occ_double_pendulum.hdf5
 #+end_src
 
 
-* Siconos compilation with a guix environment
+* Package build and compilation with a guix environment
+
+** Package build with different sources
+
+*** with transformation on repositories
+
+An example with transformations on =siconos-tutorials= and =siconos=
+
+#+name: siconos-transform-build
+#+begin_src sh :dir /tmp :compile results output silent
+  addr=https://raw.githubusercontent.com/siconos/guix-siconos &&
+  wget -q -N $addr/channels/siconos-2021-06-08.scm && \
+    guix time-machine -C siconos-2021-06-08.scm -- \
+         environment \
+         --with-git-url=siconos-tutorials=git@github.com:vacary/siconos-tutorials \
+         --with-branch=siconos-tutorials=stress_tests \
+         --with-git-url=siconos=git@github.com:vacary/siconos \
+         --with-branch=siconos=optimize_2d_granular \
+         --pure --ad-hoc gcc-toolchain cmake make grep coreutils dash \
+         siconos siconos-tutorials -- \
+         dash -c '
+  tutorials=${GUIX_ENVIRONMENT}/share/siconos/siconos-tutorials
+  siconos $tutorials/examples/mechanics/2DRigidBodies/Disks_stress_test.cpp'
+#+end_src
+
+*** with local sources
+
+#+name: siconos-master-build
+#+begin_src sh :dir /tmp :compile :results output silent
+  git clone --depth 1 git@github.com:siconos/siconos &&
+  addr=https://raw.githubusercontent.com/siconos/guix-siconos &&
+  wget -N $addr/channels/siconos-2021-05-05.scm && \
+      guix time-machine -C siconos-2021-05-05.scm -- \
+           environment --pure --ad-hoc siconos \
+           --with-source=siconos=/tmp/siconos -- siconos --help
+#+end_src
+
+
+** Compilation with guix environment
+
+
+*** usage of inputs of siconos package
 
 The =siconos= package is placed *before* =--ad-hoc= option in order to
 provide the necessary =inputs= packages:
 
-#+name: siconos-build
+#+name: siconos-raw-build
 #+begin_src sh :dir /tmp :compile :results output silent
-  git clone --depth 1 https://github.com/siconos/siconos &&
-  wget -N https://raw.githubusercontent.com/siconos/guix-siconos/channels/siconos-2021-05-05.scm && \
+  git clone --depth 1 git@github.com:siconos/siconos &&
+   addr=https://raw.githubusercontent.com/siconos/guix-siconos &&
+  wget -N $addr/channels/siconos-2021-05-05.scm && \
     guix time-machine -C siconos-2021-05-05.scm -- \
        environment siconos --pure --ad-hoc dash -- \
-       dash -c 'mkdir -p siconos-build && cd siconos-build && cmake ../siconos && make -j8'
+       dash -c 'mkdir -p siconos-build &&
+       cd siconos-build &&
+       cmake ../siconos -DWITH_BULLET=1 \
+       -DCMAKE_INSTALL_PREFIX=/tmp/install-siconos &&
+       make -j8 &&
+       make install'
 #+end_src
+
+*** the c++ bouncing ball
+
+The installed =siconos= script has not been patched to use guix installation so one need to call
+python from guix with =siconos= as argument:
+
+#+name: siconos-raw-build-bouncing-ball
+#+begin_src sh :dir /tmp :compile :results output silent
+  addr=https://raw.githubusercontent.com/siconos/guix-siconos &&
+  wget -N $addr/channels/siconos-2021-06-08.scm && \
+    guix time-machine -C siconos-2021-06-08.scm -- \
+       environment --pure --ad-hoc \
+       siconos-tutorials@4.4 \
+       cmake make gcc-toolchain \
+       python python-packaging \
+       dash coreutils -- \
+       dash -c '
+  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/tmp/install-siconos/lib &&
+  export PYTHONPATH=$PYTHONPATH:/tmp/install-siconos/lib/python3.8/site-packages
+  tutorials=${GUIX_ENVIRONMENT}/share/siconos/siconos-tutorials
+  cp $tutorials/examples/mechanics/BouncingBall/BouncingBallTS.ref .
+  python3 /tmp/install-siconos/bin/siconos \
+    $tutorials/examples/mechanics/BouncingBall/BouncingBallTS.cpp'
+#+end_src
+
+*** the python bouncing ball
+
+#+name: siconos-raw-build-bouncing-ball-python
+#+begin_src sh :dir /tmp :compile :results output silent
+  addr=https://raw.githubusercontent.com/siconos/guix-siconos &&
+  wget -N $addr/channels/siconos-2021-06-08.scm && \
+    guix time-machine -C siconos-2021-06-08.scm -- \
+       environment --pure --ad-hoc siconos-tutorials@4.4 \
+       dash python python-numpy python-matplotlib python-packaging -- \
+       dash -c '
+        export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/tmp/install-siconos/lib &&
+        export PYTHONPATH=$PYTHONPATH:/tmp/install-siconos/lib/python3.8/site-packages
+        tutorials=${GUIX_ENVIRONMENT}/share/siconos/siconos-tutorials
+        python3 /tmp/install-siconos/bin/siconos \
+        $tutorials/examples/mechanics/BouncingBall/BouncingBallTS.py'
+#+end_src
+
+*** the cube example
+
+#+name: siconos-raw-build-cube-python
+#+begin_src sh :dir /tmp :compile :results output silent
+  addr=https://raw.githubusercontent.com/siconos/guix-siconos &&
+  wget -N $addr/channels/siconos-2021-06-08.scm && \
+    guix time-machine -C siconos-2021-06-08.scm -- \
+       environment --pure --ad-hoc siconos-tutorials@4.4 \
+       dash python python-numpy python-scipy python-h5py python-packaging -- \
+       dash -c '
+        export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/tmp/install-siconos/lib &&
+        export PYTHONPATH=$PYTHONPATH:/tmp/install-siconos/lib/python3.8/site-packages
+        tutorials=${GUIX_ENVIRONMENT}/share/siconos/siconos-tutorials
+        python3 /tmp/install-siconos/bin/siconos \
+        $tutorials/examples/mechanics/GeometricPrimitives/cube.py'
+#+end_src
+
+
+* COMMENT Org Babel settings
+
+Local variables:
+org-latex-minted-options:  '("frame" "single"))
+org-confirm-babel-evaluate: nil
+org-image-actual-width: nil
+buffer-file-coding-system: utf-8-unix
+End:
