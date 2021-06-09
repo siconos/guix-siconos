@@ -69,7 +69,7 @@ They are named with this convention:
 #+end_src
 
 
-** How to form a reproductible specification:
+** How to form a reproducible specification:
 
 #+name: fix-channels-with-wget
 #+begin_src sh :dir /tmp :results raw :compile :results output silent
@@ -82,7 +82,7 @@ They are named with this convention:
 
 * Examples
 
-** The reproductible c++ bouncing ball with reference check
+** The reproducible c++ bouncing ball with reference check
 
 #+name: bouncing-ball-computation
 #+begin_src sh :dir /tmp :compile :file bouncing-ball-computation :results output silent
@@ -118,7 +118,7 @@ They are named with this convention:
 #+end_src
 
 
-** A reproductible experiment of a cube falling on the ground
+** A reproducible experiment of a cube falling on the ground
 
 *** computation
 
