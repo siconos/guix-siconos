@@ -13,7 +13,6 @@
   #:use-module (guix build-system copy)
   #:use-module (guix utils)
   #:use-module ((guix licenses) #:prefix license:)
-  #:use-module (guix build rpath)
   #:use-module (gnu packages)
   #:use-module (gnu packages check)
   #:use-module (gnu packages gawk)
@@ -170,12 +169,25 @@ Mechanics, and Computer Graphics.")
                 "0lksvbw4m3z938hsi3bs9zdbiq6ijgzdfqan0p7qhdsawhmzzzv2"))))
     (build-system cmake-build-system)
     (arguments
-     '(#:configure-flags '("-DCMAKE_VERBOSE_MAKEFILE=ON"
+     `(#:configure-flags '("-DCMAKE_VERBOSE_MAKEFILE=ON"
                            "-DWITH_BULLET=ON"
                            "-DWITH_OCE=ON"
                            "-DWITH_FCLIB=ON"
+                           "-DCOMPONENTS=externals;numerics;kernel;control;mechanics;io;mechanisms"
                            "-DWITH_SYSTEM_SUITESPARSE=ON")
-                         #:tests? #f))                              ;XXX: no "test" target
+       #:phases
+       (modify-phases %standard-phases
+         (add-after 'unpack 'delete-ixx
+           ;; some troubles with this file and cmake 3.21.4
+           ;; probably related to https://gitlab.kitware.com/cmake/cmake/-/merge_requests/5926
+           (lambda _ (delete-file "mechanisms/src/CADMBTB/mymath_FunctionSetRoot.ixx") #t))
+         (add-after 'install 'patch-mechanisms
+           (lambda*  (#:key outputs #:allow-other-keys)
+             (substitute* (string-append (assoc-ref outputs "out")
+                                         "/bin/siconos_mechanisms")
+               (("/usr/bin/env python") (which "python3")))
+             #t)))
+       #:tests? #f))                              ;XXX: no "test" target
     (outputs '("out" "debug"))
     (native-inputs
      `(("swig" ,swig)
@@ -231,10 +243,10 @@ Mechanics, and Computer Graphics.")
        ("python-mpi4py" ,python-mpi4py)
        ,@(package-propagated-inputs siconos-4.3)))
     (arguments
-     `(#:configure-flags `("-DWITH_MPI=ON"
-                           "-DWITH_MUMPS=ON" ,@configure-flags)
-       #:tests? #f))))                              ;XXX: no "test" target
-
+     (substitute-keyword-arguments (package-arguments siconos)
+       ((#:configure-flags flags)
+        `("-DWITH_MPI=ON"
+          "-DWITH_MUMPS=ON" ,@flags))))))
 
 (define-public siconos-4.2
   (package
@@ -255,12 +267,12 @@ Mechanics, and Computer Graphics.")
     `(("boost" ,boost-1.68.0)
       ,@(alist-delete "boost" (package-propagated-inputs siconos))))
    (arguments
-    `(#:configure-flags `("-DCMAKE_VERBOSE_MAKEFILE=ON"
-                           "-DWITH_BULLET=ON"
-                           "-DWITH_OCC=ON"
-                           "-DWITH_FCLIB=ON"
-                           "-DWITH_SYSTEM_SUITESPARSE=ON")
-      #:tests? #f))))
+    (substitute-keyword-arguments (package-arguments siconos)
+      ((#:configure-flags flags)
+       `(cons "-DWITH_OCC=ON"
+              (cons "-DWITH_MECHANISMS=ON"
+                    (delete "-DCOMPONENTS=externals;numerics;kernel;control;mechanics;io;mechanisms"
+                            (delete "-DWITH_OCE=ON" ,flags)))))))))
 
 (define-public siconos-4.4-rc2
   (package
@@ -286,7 +298,8 @@ Mechanics, and Computer Graphics.")
              "https://github.com/siconos/siconos/archive/"
              version ".tar.gz"))
        (sha256 (base32
-                "148fwppjj7rdiqrgapbm9rg4k60d8xm9q4fc3757fp236nv8bxip"))))))
+                "148fwppjj7rdiqrgapbm9rg4k60d8xm9q4fc3757fp236nv8bxip"))
+       (patches (search-patches "siconos-cmake-ixx.patch"))))))
 
 (define-public siconos-mpi-4.4-rc2
   (package
@@ -392,24 +405,22 @@ enable highly dynamic and modular programming of any CAD application.")
    (arguments
      `(#:modules ((guix build cmake-build-system)
                   (guix build utils)
-                  (guix build rpath)
                   (ice-9 match)
                   (ice-9 popen)
                   (srfi srfi-1))
-       #:imported-modules (,@%cmake-build-system-modules
-                           (guix build rpath))
-      #:build-type
-      "Release"           ;Build without '-g' to save space.
-      #:configure-flags
-      '("-DWITH_SICONOS_NUMERICS=1")
-      #:tests? #f
-      #:phases
-      (modify-phases %standard-phases
-        (add-after 'install 'fix-rpath
-          (lambda* (#:key outputs #:allow-other-keys)
-            (let* ((out (assoc-ref outputs "out"))
-                   (libdir (string-append out "/lib")))
-              (augment-rpath (string-append out "/lib/python"
+       #:imported-modules (,@%cmake-build-system-modules)
+       #:build-type
+       "Release"           ;Build without '-g' to save space.
+       #:configure-flags
+       '("-DWITH_SICONOS_NUMERICS=1")
+       #:tests? #f
+       #:phases
+       (modify-phases %standard-phases
+         (add-after 'install 'fix-rpath
+           (lambda* (#:key outputs #:allow-other-keys)
+             (let* ((out (assoc-ref outputs "out"))
+                    (libdir (string-append out "/lib")))
+               (install-file (string-append "lib/python"
                                             ,(version-major+minor
                                               (package-version python)) "/site-packages/pylmgc90/chipy/_lmgc90.so") libdir)))))))
    (home-page "https://git-xen.lmgc.univ-montp2.fr/lmgc90/lmgc90_user/wikis/home")
