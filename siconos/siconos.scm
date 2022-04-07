@@ -171,6 +171,7 @@ Mechanics, and Computer Graphics.")
     (arguments
      `(#:configure-flags '("-DCMAKE_VERBOSE_MAKEFILE=ON"
                            "-DWITH_BULLET=ON"
+                           "-DBULLET_USE_DOUBLE_PRECISION=ON"
                            "-DWITH_OCE=ON"
                            "-DWITH_FCLIB=ON"
                            "-DCOMPONENTS=externals;numerics;kernel;control;mechanics;io;mechanisms"
@@ -200,7 +201,7 @@ Mechanics, and Computer Graphics.")
      `(("python" ,python)))
     (propagated-inputs
      `(("boost" ,boost)
-       ("bullet" ,bullet)
+       ("bullet" ,bullet-double-precision)
        ("fclib" ,fclib)
        ("gmp" ,gmp)
        ("lapack" ,lapack)
@@ -457,6 +458,17 @@ cohesion...) or complex multiphysics coupling (fluid, thermal...)
     "A Python wrapper to Qhull (http://www.qhull.org/) for the computation of the convex hull, Delaunay triangulation and Voronoi diagram")
    (license license:expat)))
 
+;
+(define-public bullet-single-precision
+  (package
+    (inherit bullet)
+    (name "bullet-single-precision")
+    (arguments
+     (substitute-keyword-arguments (package-arguments bullet)
+       ((#:configure-flags flags)
+        `(cons "-DUSE_DOUBLE_PRECISION=OFF"
+               (delete "-DUSE_DOUBLE_PRECISION=ON" ,flags)))))))
+
 (define-public bullet-double-precision
   (package
     (inherit bullet)
@@ -464,18 +476,42 @@ cohesion...) or complex multiphysics coupling (fluid, thermal...)
     (arguments
      (substitute-keyword-arguments (package-arguments bullet)
        ((#:configure-flags flags)
-        `(cons "-DUSE_DOUBLE_PRECISION=ON" ,flags))))))
+        `(cons "-DUSE_DOUBLE_PRECISION=ON"
+               (delete "-DUSE_DOUBLE_PRECISION=OFF" ,flags)))))))
 
 
-;fix: can siconos package detect input bullet double precision ?
-(define-public siconos-bullet-double-precision
+(define-public siconos-bullet-single-precision
   (package
     (inherit siconos)
-    (name "siconos-bullet-double-precision")
+    (name "siconos-bullet-single-precision")
     (propagated-inputs
-     `(("bullet" ,bullet-double-precision)
+     `(("bullet" ,bullet-single-precision)
        ,@(package-propagated-inputs siconos)))
     (arguments
      (substitute-keyword-arguments (package-arguments siconos)
        ((#:configure-flags flags)
-        `(cons "-DBULLET_USE_DOUBLE_PRECISION=ON" ,flags))))))
+        `(cons "-DBULLET_USE_DOUBLE_PRECISION=OFF"
+               (delete "-DBULLET_USE_DOUBLE_PRECISION=ON" ,flags)))))))
+
+(define-public python-pyhull
+  (package
+    (name "python-pyhull")
+    (version "2015.2.1")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (pypi-uri "pyhull" version))
+       (sha256
+        (base32
+         "091sph52c4yk1jlm5w8xidxpzbia9r7s42bnb23q4m4b56ihmzyj"))))
+    (build-system python-build-system)
+    (propagated-inputs
+     `(("python-numpy" ,python-numpy)))
+    (home-page
+     "https://github.com/materialsvirtuallab/pyhull")
+    (synopsis
+     "A Python wrapper to Qhull (http://www.qhull.org/) for the computation of the convex hull, Delaunay triangulation and Voronoi diagram")
+    (description
+     "A Python wrapper to Qhull (http://www.qhull.org/) for the computation of the convex hull, Delaunay triangulation and Voronoi diagram")
+    (license license:expat)))
+
