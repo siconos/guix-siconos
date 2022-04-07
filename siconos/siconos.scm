@@ -436,29 +436,6 @@ cohesion...) or complex multiphysics coupling (fluid, thermal...)
    (license license:cecill)))
 
 
-(define-public python-pyhull
-  (package
-   (name "python-pyhull")
-   (version "2015.2.1")
-   (source
-    (origin
-     (method url-fetch)
-     (uri (pypi-uri "pyhull" version))
-     (sha256
-      (base32
-       "091sph52c4yk1jlm5w8xidxpzbia9r7s42bnb23q4m4b56ihmzyj"))))
-   (build-system python-build-system)
-   (propagated-inputs
-    `(("python-numpy" ,python-numpy)))
-   (home-page
-    "https://github.com/materialsvirtuallab/pyhull")
-   (synopsis
-    "A Python wrapper to Qhull (http://www.qhull.org/) for the computation of the convex hull, Delaunay triangulation and Voronoi diagram")
-   (description
-    "A Python wrapper to Qhull (http://www.qhull.org/) for the computation of the convex hull, Delaunay triangulation and Voronoi diagram")
-   (license license:expat)))
-
-;
 (define-public bullet-single-precision
   (package
     (inherit bullet)
