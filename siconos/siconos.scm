@@ -37,6 +37,7 @@
   #:use-module (gnu packages python)
   #:use-module (gnu packages python-science)
   #:use-module (gnu packages python-xyz)
+  #:use-module (gnu packages python-build)
   #:use-module (gnu packages multiprecision)
   #:use-module (gnu packages mpi)
   #:use-module (gnu packages engineering)
@@ -51,6 +52,7 @@
   #:use-module (gnu packages serialization)
   #:use-module (gnu packages xiph)
   #:use-module (gnu packages game-development)
+  #:use-module (gnu packages image-processing)
   #:use-module (siconos boost)
   #:use-module (siconos swig))
 
@@ -328,6 +330,46 @@ Mechanics, and Computer Graphics.")
              version ".tar.gz"))
        (sha256 (base32
                 "148fwppjj7rdiqrgapbm9rg4k60d8xm9q4fc3757fp236nv8bxip"))))))
+
+(define-public siconos-4.5.x
+  (package
+   (inherit siconos-4.4-rc3)
+   (name "siconos-4.5.x")
+   (version "4.5.x")
+   (source
+    (origin
+     (method git-fetch)
+     (uri (git-reference
+           (url "https://github.com/siconos/siconos/")
+           (commit "bee4d6bd5ec744c4467c52ca8c824fb948cdbff7")))
+     (sha256 (base32
+              "0yb8nqmjhhn2za2qw4709lmd016038xg0mmkwz2nvnlar6pgfhk3"))))
+   (native-inputs
+    `(("python-wheel", python-wheel)
+      ("python-pip", python-pip)
+      ,@(package-native-inputs siconos-4.4-rc3)))
+   (propagated-inputs
+    `(("vtk", vtk)
+      ("python-pyhull", python-pyhull)
+      ,@(package-propagated-inputs siconos-4.4-rc3)))
+   (arguments
+    (substitute-keyword-arguments
+     (package-arguments siconos-4.4-rc3)
+     ((#:configure-flags flags)
+      `(cons "-DFCLIB_ROOT=1"
+             (cons (string-append "-DISOLATED_INSTALL=" (assoc-ref %outputs "out"))
+                   (cons "-DCOMPONENTS=externals;numerics;kernel;control;mechanics;io"
+                         (delete "-DCOMPONENTS=externals;numerics;kernel;control;mechanics;io;mechanisms"
+                                 ,flags)))))
+     ((#:phases phases)
+      `(modify-phases
+        ,phases
+        (delete 'patch-mechanisms)
+        (add-after 'unpack 'hey-look-we-can-go-beyond-the-fatal
+                   (lambda _
+                     (substitute* "cmake/SiconosSetup.cmake"
+                                  (("FATAL_ERROR") "WARNING"))
+                     #t))))))))
 
 (define-public siconos siconos-4.4-rc3)
 
