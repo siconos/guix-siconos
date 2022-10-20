@@ -155,6 +155,21 @@ Mechanics, and Computer Graphics.")
        (sha256 (base32
                 "0451cj8vx42zyrd1injcccw5sl5zz9f9afd54q3ax0h6d52q994x"))))))
 
+
+(define-public siconos-tutorials-4.5.x
+  (package
+   (inherit siconos-tutorials-4.4)
+   (name "siconos-tutorials-4.5.x")
+   (version "4.5.x")
+   (source
+    (origin
+     (method git-fetch)
+     (uri (git-reference
+           (url "https://github.com/siconos/siconos-tutorials")
+           (commit "0861cb54988bb60738e7ce891ebadaa7dac35b88")))
+     (sha256 (base32
+              "0dj0b8kscy2h3chxpw330dbnppl43gydhpm7na05hnsp74in8k5s"))))))
+
 (define-public siconos-tutorials siconos-tutorials-4.4)
 
 (define-public siconos-4.3
