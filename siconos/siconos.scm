@@ -365,7 +365,11 @@ Mechanics, and Computer Graphics.")
       `(modify-phases
         ,phases
         (delete 'patch-mechanisms)
-        (add-after 'unpack 'hey-look-we-can-go-beyond-the-fatal
+        (add-after 'check 'set-SOURCE-DATE-EPOCH
+           (lambda _
+             (setenv "SOURCE_DATE_EPOCH" "315532800")
+             #t))
+        (add-after 'unpack 'hey-look-we-can-go-beyond-the-fatal-error
                    (lambda _
                      (substitute* "cmake/SiconosSetup.cmake"
                                   (("FATAL_ERROR") "WARNING"))
