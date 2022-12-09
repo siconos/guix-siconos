@@ -2,6 +2,7 @@
 ;; commit constraints on both guix-siconos and guix channels
 (cons
  (channel
-  (name 'guix-siconos)
-  (url "https://github.com/siconos/guix-siconos"))
+  (name 'guix-hpc)
+  (url "https://gitlab.inria.fr/bremond/guix-hpc.git")
+  (branch "add-siconos"))
  %default-channels)
