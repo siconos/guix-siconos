@@ -3,7 +3,7 @@
         (url "https://gitlab.inria.fr/bremond/guix-hpc.git")
         (branch "add-siconos")
         (commit
-          "753b3cae939e94aa34d6af1d44db2164298061f1"))
+          "3edc1996f9a7579a55ed9d9ab34b5cbe3abf9801"))
       (channel
         (name 'guix)
         (url "https://git.savannah.gnu.org/git/guix.git")
