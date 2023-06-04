@@ -2,11 +2,11 @@
 
 * Introduction
 
-Some [[https://guix.gnu.org/][Guix]] examples for the usage of [[https://nonsmooth.gricad-pages.univ-grenoble-alpes.fr/siconos/index][Siconos]].
-
-See [[https://guix.gnu.org/manual/en/html_node/Channels.html][Guix channels]] for more informations about how to configure channels for guix.
+These are some [[https://guix.gnu.org/][Guix]] examples for the usage of [[https://nonsmooth.gricad-pages.univ-grenoble-alpes.fr/siconos/index][Siconos]] through the [[https://hpc.guix.info/][Guix HPC]] channel.
 
 * Usage
+
+See [[https://guix.gnu.org/manual/en/html_node/Channels.html][Guix channels]] for more information about how to configure channels for guix.
 
 ** The channel file
 
@@ -23,7 +23,7 @@ See [[https://guix.gnu.org/manual/en/html_node/Channels.html][Guix channels]] fo
 
  - some branch specification may be added:
 
-#+begin_src scheme :exports code :eval no :tangle siconos-now-guix-version-1-1-0.scm
+#+begin_src scheme :exports code :eval no :tangle siconos-now-guix-version-1-4-0.scm
   (list
    (channel
     (name 'guix-hpc)
@@ -36,7 +36,7 @@ See [[https://guix.gnu.org/manual/en/html_node/Channels.html][Guix channels]] fo
 
  - for reproducibility commits are necessary:
 
-#+begin_src scheme :eval no :tangle siconos-2021-05-03.scm
+#+begin_src scheme :eval no :tangle siconos-2023-03-06.scm
 (list (channel
         (name 'guix-hpc)
         (url "https://gitlab.inria.fr/bremond/guix-hpc.git")
