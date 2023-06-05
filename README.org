@@ -2,96 +2,12 @@
 
 * Introduction
 
-These are some [[https://guix.gnu.org/][Guix]] examples for the usage of [[https://nonsmooth.gricad-pages.univ-grenoble-alpes.fr/siconos/index][Siconos]] through the [[https://hpc.guix.info/][Guix HPC]] channel.
-
-* Usage
-
-See [[https://guix.gnu.org/manual/en/html_node/Channels.html][Guix channels]] for more information about how to configure channels for guix.
-
-** The channel file
-
-- it must include the repository url:
-
-#+begin_src scheme :exports code :eval no :tangle siconos-now.scm
-  (cons
-   (channel
-    (name 'guix-hpc)
-    (url "https://gitlab.inria.fr/bremond/guix-hpc.git")
-    (branch "add-siconos"))
-   %default-channels)
-#+end_src
-
- - some branch specification may be added:
-
-#+begin_src scheme :exports code :eval no :tangle siconos-now-guix-version-1-4-0.scm
-  (list
-   (channel
-    (name 'guix-hpc)
-    (url "https://gitlab.inria.fr/bremond/guix-hpc.git")
-    (branch "add-siconos"))
-   (name 'guix)
-   (url "https://git.savannah.gnu.org/git/guix.git")
-   (branch "version-1.4.0")))
-#+end_src
-
- - for reproducibility commits are necessary:
-
-#+begin_src scheme :eval no :tangle siconos-2023-03-06.scm
-(list (channel
-        (name 'guix-hpc)
-        (url "https://gitlab.inria.fr/bremond/guix-hpc.git")
-        (branch "add-siconos")
-        (commit
-          "e51151ff99fa8f97ffb9133f31745933dbb46ec8"))
-      (channel
-        (name 'guix)
-        (url "https://git.savannah.gnu.org/git/guix.git")
-        (branch "master")
-        (commit
-          "461577f0fce1b69a88a752857eeee2e9e1116d6c")
-        (introduction
-          (make-channel-introduction
-            "9edb3f66fd807b096b48283debdcddccfea34bad"
-            (openpgp-fingerprint
-              "BBB0 2DDF 2CEA F6A8 0D1D  E643 A2A0 6DF2 A33A 54FA")))))
-#+end_src
-
-** Download of channel files
-
-Some specifications are available in the channel branch of this repository.
-They are named with this convention:
-
- - without constraints, the channels file is named =siconos-now.scm=
- - with constraints on commits with the same date for Siconos channel
-   and Guix channel: =siconos-<iso 8601 date of commits>.scm=
- - with different dates for Siconos channel and Guix channel:
-   =siconos-<iso 8601 date of siconos commits>-<iso 8601 date of Guix commits>.scm=
-
-#+begin_src sh :dir /tmp :results value silent
-  addr=https://raw.githubusercontent.com/siconos/guix-siconos
-  wget -q -N $addr/channels/siconos-now.scm
-#+end_src
-
-#+begin_src sh :dir /tmp :results value silent
-  addr=https://raw.githubusercontent.com/siconos/guix-siconos
-  wget -q -N $addr/channels/siconos-2021-05-05.scm
-#+end_src
-
-
-** How to form a reproducible specification:
-
-#+name: fix-channels-with-wget
-#+begin_src sh :dir /tmp :results raw :compile :results output silent
-  addr=https://raw.githubusercontent.com/siconos/guix-siconos
-  wget -q -N $addr/channels/siconos-now.scm && \
-    guix time-machine  -C siconos-now.scm -- \
-         describe -f channels 2>/dev/null > \
-         siconos-$(date --iso-8601).scm
-#+end_src
+These are some cut and paste examples for the usage of [[https://nonsmooth.gricad-pages.univ-grenoble-alpes.fr/siconos/index][Siconos]] with
+[[https://guix.gnu.org/][Guix]] through the [[https://hpc.guix.info/][Guix HPC]] channel.
 
 * Examples
 
-** The reproducible c++ bouncing ball with reference check
+** A c++ bouncing ball with reference check
 
 #+name: bouncing-ball-computation
 #+begin_src sh :dir /tmp :compile :file bouncing-ball-computation :results output silent
@@ -109,7 +25,7 @@ They are named with this convention:
   siconos $bdir/BouncingBallTS.cpp'
 #+end_src
 
-** The python bouncing ball
+** A python bouncing ball
 
 #+name: bouncing-ball-python-computation
 #+begin_src sh :dir /tmp :compile :results output silent
@@ -323,6 +239,92 @@ interpreter, it is necessary to call the =siconos= script with the
         tutorials=${GUIX_ENVIRONMENT}/share/siconos/siconos-tutorials
         python3 /tmp/install-siconos/bin/siconos \
         $tutorials/examples/mechanics/GeometricPrimitives/cube.py'
+#+end_src
+
+
+* Configuration of the Guix channel for Siconos
+
+See [[https://guix.gnu.org/manual/en/html_node/Channels.html][Guix channels]] for more information about how to configure guix channels.
+
+** The channel file
+
+- it must include the repository url:
+
+#+begin_src scheme :exports code :eval no :tangle siconos-now.scm
+  (cons
+   (channel
+    (name 'guix-hpc)
+    (url "https://gitlab.inria.fr/bremond/guix-hpc.git")
+    (branch "add-siconos"))
+   %default-channels)
+#+end_src
+
+ - some branch specification may be added:
+
+#+begin_src scheme :exports code :eval no :tangle siconos-now-guix-version-1-4-0.scm
+  (list
+   (channel
+    (name 'guix-hpc)
+    (url "https://gitlab.inria.fr/bremond/guix-hpc.git")
+    (branch "add-siconos"))
+   (name 'guix)
+   (url "https://git.savannah.gnu.org/git/guix.git")
+   (branch "version-1.4.0")))
+#+end_src
+
+ - for reproducibility commits are necessary:
+
+#+begin_src scheme :eval no :tangle siconos-2023-03-06.scm
+(list (channel
+        (name 'guix-hpc)
+        (url "https://gitlab.inria.fr/bremond/guix-hpc.git")
+        (branch "add-siconos")
+        (commit
+          "e51151ff99fa8f97ffb9133f31745933dbb46ec8"))
+      (channel
+        (name 'guix)
+        (url "https://git.savannah.gnu.org/git/guix.git")
+        (branch "master")
+        (commit
+          "461577f0fce1b69a88a752857eeee2e9e1116d6c")
+        (introduction
+          (make-channel-introduction
+            "9edb3f66fd807b096b48283debdcddccfea34bad"
+            (openpgp-fingerprint
+              "BBB0 2DDF 2CEA F6A8 0D1D  E643 A2A0 6DF2 A33A 54FA")))))
+#+end_src
+
+** Download of channel files
+
+Some specifications are available in the channel branch of this repository.
+They are named with this convention:
+
+ - without constraints, the channels file is named =siconos-now.scm=
+ - with constraints on commits with the same date for Siconos channel
+   and Guix channel: =siconos-<iso 8601 date of commits>.scm=
+ - with different dates for Siconos channel and Guix channel:
+   =siconos-<iso 8601 date of siconos commits>-<iso 8601 date of Guix commits>.scm=
+
+#+begin_src sh :dir /tmp :results value silent
+  addr=https://raw.githubusercontent.com/siconos/guix-siconos
+  wget -q -N $addr/channels/siconos-now.scm
+#+end_src
+
+#+begin_src sh :dir /tmp :results value silent
+  addr=https://raw.githubusercontent.com/siconos/guix-siconos
+  wget -q -N $addr/channels/siconos-2021-05-05.scm
+#+end_src
+
+
+** How to form a reproducible specification:
+
+#+name: fix-channels-with-wget
+#+begin_src sh :dir /tmp :results raw :compile :results output silent
+  addr=https://raw.githubusercontent.com/siconos/guix-siconos
+  wget -q -N $addr/channels/siconos-now.scm && \
+    guix time-machine  -C siconos-now.scm -- \
+         describe -f channels 2>/dev/null > \
+         siconos-$(date --iso-8601).scm
 #+end_src
 
 
