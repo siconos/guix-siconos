@@ -3,7 +3,7 @@
 * Introduction
 
 These are some cut and paste examples for the usage of [[https://nonsmooth.gricad-pages.univ-grenoble-alpes.fr/siconos/index][Siconos]] with
-[[https://guix.gnu.org/][Guix]] through the [[https://hpc.guix.info/][Guix HPC]] channel.
+[[https://guix.gnu.org/][Guix]].
 
 * Examples
 
