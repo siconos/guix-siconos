@@ -14,7 +14,7 @@ These are some cut and paste examples for the usage of [[https://nonsmooth.grica
   addr=https://raw.githubusercontent.com/siconos/guix-siconos &&
   wget -q -N $addr/channels/siconos-2021-06-08.scm && \
     guix time-machine -C siconos-2021-06-08.scm -- \
-         shell --pure \
+         environment --ad-hoc --pure \
          gcc-toolchain cmake make \
          coreutils grep dash \
          siconos@4.4 siconos-tutorials@4.4 -- \
@@ -32,7 +32,7 @@ These are some cut and paste examples for the usage of [[https://nonsmooth.grica
    addr=https://raw.githubusercontent.com/siconos/guix-siconos
    wget -N $addr/channels/siconos-2021-06-08.scm && \
    guix time-machine -C siconos-2021-06-08.scm -- \
-        shell --pure \
+        environment --ad-hoc --pure \
         python python-numpy python-matplotlib python-packaging \
         siconos@4.4.0.rc3 siconos-tutorials@4.4 dash coreutils sed -- \
         dash -c '
@@ -52,7 +52,7 @@ These are some cut and paste examples for the usage of [[https://nonsmooth.grica
   addr=https://raw.githubusercontent.com/siconos/guix-siconos
   wget -N $addr/channels/siconos-2021-06-08.scm && \
     guix time-machine -C siconos-2021-06-08.scm -- \
-         shell --pure  \
+         environment --ad-hoc --pure  \
          siconos@4.5.x siconos-tutorials dash -- \
          dash -c '
   tutorials=${GUIX_ENVIRONMENT}/share/siconos/siconos-tutorials
