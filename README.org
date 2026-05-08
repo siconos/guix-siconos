@@ -13,11 +13,12 @@ These are some cut and paste examples for the usage of [[https://nonsmooth.grica
 #+begin_src sh :dir /tmp :compile :file bouncing-ball-computation :results output silent
   addr=https://raw.githubusercontent.com/siconos/guix-siconos &&
   wget -q -N $addr/channels/siconos-2021-06-08.scm && \
-    guix time-machine -C siconos-2021-06-08.scm -- \
+    guix time-machine --branch=version-1.2.0 -- \
+         time-machine -C siconos-2021-06-08.scm -- \
          environment --ad-hoc --pure \
          gcc-toolchain cmake make \
          coreutils grep dash \
-         siconos@4.4 siconos-tutorials@4.4 -- \
+         siconos siconos-tutorials@4.4 -- \
          dash -c '
   tutorials=${GUIX_ENVIRONMENT}/share/siconos/siconos-tutorials
   bdir=$tutorials/examples/mechanics/BouncingBall
@@ -29,17 +30,19 @@ These are some cut and paste examples for the usage of [[https://nonsmooth.grica
 
 #+name: bouncing-ball-python-computation
 #+begin_src sh :dir /tmp :compile :results output silent
-   addr=https://raw.githubusercontent.com/siconos/guix-siconos
-   wget -N $addr/channels/siconos-2021-06-08.scm && \
-   guix time-machine -C siconos-2021-06-08.scm -- \
-        environment --ad-hoc --pure \
-        python python-numpy python-matplotlib python-packaging \
-        siconos@4.4.0.rc3 siconos-tutorials@4.4 dash coreutils sed -- \
-        dash -c '
-         tutorials=${GUIX_ENVIRONMENT}/share/siconos/siconos-tutorials
-         bdir=$tutorials/examples/mechanics/BouncingBall
-         sed "/matplotlib.use.*/a else:\n    matplotlib.use(\"TkAgg\")" \
-         $bdir/BouncingBallTS.py | python3'
+  addr=https://raw.githubusercontent.com/siconos/guix-siconos
+  wget -N $addr/channels/siconos-2021-06-08.scm && \
+    guix time-machine --branch=version-1.2.0 -- \
+         time-machine -C siconos-2021-06-08.scm -- \
+       environment --ad-hoc --pure \
+       --preserve=XAUTHORITY \
+       python python-numpy python-matplotlib python-packaging \
+       siconos siconos-tutorials@4.4 dash coreutils sed -- \
+       dash -c '
+        tutorials=${GUIX_ENVIRONMENT}/share/siconos/siconos-tutorials
+        bdir=$tutorials/examples/mechanics/BouncingBall
+        sed "/matplotlib.use.*/a else:\n    matplotlib.use(\"TkAgg\")" \
+        $bdir/BouncingBallTS.py | python3'
 #+end_src
 
 
@@ -47,13 +50,14 @@ These are some cut and paste examples for the usage of [[https://nonsmooth.grica
 
 *** computation
 
-#+name: cube-computation
+#+name: cube-computation :compile :results none
 #+begin_src sh :dir /tmp :compile :results output silent
   addr=https://raw.githubusercontent.com/siconos/guix-siconos
   wget -N $addr/channels/siconos-2021-06-08.scm && \
-    guix time-machine -C siconos-2021-06-08.scm -- \
+    guix time-machine --branch=version-1.2.0 --\
+    time-machine -C siconos-2021-06-08.scm -- \
          environment --ad-hoc --pure  \
-         siconos@4.5.x siconos-tutorials dash -- \
+         siconos siconos-tutorials dash -- \
          dash -c '
   tutorials=${GUIX_ENVIRONMENT}/share/siconos/siconos-tutorials
   siconos $tutorials/examples/mechanics/GeometricPrimitives/cube.py'
@@ -65,8 +69,10 @@ These are some cut and paste examples for the usage of [[https://nonsmooth.grica
 #+begin_src sh :dir /tmp :compile :results output silent
   addr=https://raw.githubusercontent.com/siconos/guix-siconos
   wget -N $addr/channels/siconos-2021-06-08.scm && \
-  guix time-machine -C siconos-2021-06-08.scm -- \
+  guix time-machine --branch=version-1.2.0 -- \
+       time-machine -C siconos-2021-06-08.scm -- \
        environment --pure --ad-hoc \
+       --preserve=XAUTHORITY \
        vtk siconos -- \
        siconos_vview cube.hdf5
 #+end_src
@@ -83,8 +89,10 @@ contactors. The computation is done with a previous version of Siconos
 #+begin_src sh :dir /tmp :compile :results output silent
   addr=https://raw.githubusercontent.com/siconos/guix-siconos &&
   wget -N $addr/channels/siconos-2021-06-08.scm && \
-    guix time-machine -C siconos-2021-06-08.scm -- \
+    guix time-machine --branch=version-1.2.0 -- \
+         time-machine -C siconos-2021-06-08.scm -- \
          environment \
+         --preserve=XAUTHORITY \
          --with-git-url=siconos-tutorials=https://github.com/siconos/siconos-tutorials \
          --with-commit=siconos-tutorials=7e1322d1c51224970967e46408b81a84e81b18a8 \
          --pure --ad-hoc \
@@ -104,7 +112,8 @@ contactors. The computation is done with a previous version of Siconos
 #+begin_src sh :dir /tmp :compile :results output silent
   addr=https://raw.githubusercontent.com/siconos/guix-siconos &&
   wget -N $addr/channels/siconos-2021-06-08.scm && \
-    guix time-machine -C siconos-2021-06-08.scm -- \
+    guix time-machine --branch=version-1.2.0 -- \
+         time-machine -C siconos-2021-06-08.scm -- \
          environment --pure --ad-hoc \
          pythonocc vtk siconos@4.2 dash -- dash -c '\
          cd OCC_Examples && \
@@ -124,7 +133,8 @@ An example with transformations on =siconos-tutorials= and =siconos=
 #+begin_src sh :dir /tmp :compile results output silent
   addr=https://raw.githubusercontent.com/siconos/guix-siconos &&
   wget -q -N $addr/channels/siconos-2021-06-08.scm && \
-    guix time-machine -C siconos-2021-06-08.scm -- \
+    guix time-machine --branch=version-1.2.0 -- \
+         time-machine -C siconos-2021-06-08.scm -- \
          environment \
          --with-git-url=siconos-tutorials=git@github.com:vacary/siconos-tutorials \
          --with-branch=siconos-tutorials=stress_tests \
@@ -146,7 +156,8 @@ To check code before commit, there is the =--with-source= option:
   git clone --depth 1 git@github.com:siconos/siconos &&
   addr=https://raw.githubusercontent.com/siconos/guix-siconos &&
   wget -N $addr/channels/siconos-2021-05-05.scm && \
-      guix time-machine -C siconos-2021-05-05.scm -- \
+      guix time-machine --branch=version-1.2.0 -- \
+           time-machine -C siconos-2021-05-05.scm -- \
            environment --pure --ad-hoc siconos \
            --with-source=siconos=/tmp/siconos -- siconos --help
 #+end_src
@@ -170,7 +181,8 @@ provide the necessary =inputs= packages:
   git clone --depth 1 git@github.com:siconos/siconos &&
    addr=https://raw.githubusercontent.com/siconos/guix-siconos &&
   wget -N $addr/channels/siconos-2021-05-05.scm && \
-    guix time-machine -C siconos-2021-05-05.scm -- \
+    guix time-machine --branch=version-1.2.0 -- \
+         time-machine -C siconos-2021-05-05.scm -- \
        environment siconos --pure --ad-hoc dash -- \
        dash -c 'mkdir -p siconos-build &&
        cd siconos-build &&
@@ -192,7 +204,8 @@ interpreter, it is necessary to call the =siconos= script with the
 #+begin_src sh :dir /tmp :compile :results output silent
   addr=https://raw.githubusercontent.com/siconos/guix-siconos &&
   wget -N $addr/channels/siconos-2021-06-08.scm && \
-    guix time-machine -C siconos-2021-06-08.scm -- \
+    guix time-machine --branch=version-1.2.0 -- \
+         time-machine -C siconos-2021-06-08.scm -- \
        environment --pure --ad-hoc \
        siconos-tutorials@4.4 \
        cmake make gcc-toolchain \
@@ -213,7 +226,8 @@ interpreter, it is necessary to call the =siconos= script with the
 #+begin_src sh :dir /tmp :compile :results output silent
   addr=https://raw.githubusercontent.com/siconos/guix-siconos &&
   wget -N $addr/channels/siconos-2021-06-08.scm && \
-    guix time-machine -C siconos-2021-06-08.scm -- \
+    guix time-machine --branch=version-1.2.0 -- \
+         time-machine -C siconos-2021-06-08.scm -- \
        environment --pure --ad-hoc siconos-tutorials@4.4 \
        dash python python-numpy python-matplotlib python-packaging -- \
        dash -c '
@@ -230,7 +244,8 @@ interpreter, it is necessary to call the =siconos= script with the
 #+begin_src sh :dir /tmp :compile :results output silent
   addr=https://raw.githubusercontent.com/siconos/guix-siconos &&
   wget -N $addr/channels/siconos-2021-06-08.scm && \
-    guix time-machine -C siconos-2021-06-08.scm -- \
+    guix time-machine --branch=version-1.2.0 -- \
+         time-machine -C siconos-2021-06-08.scm -- \
        environment --pure --ad-hoc siconos-tutorials@4.4 \
        dash python python-numpy python-scipy python-h5py python-packaging -- \
        dash -c '
