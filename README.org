@@ -11,7 +11,7 @@ These are some cut and paste examples for the usage of [[https://nonsmooth.grica
 
 #+name: bouncing-ball-computation
 #+begin_src sh :dir /tmp :compile :file bouncing-ball-computation :results output silent
-  addr=https://raw.githubusercontent.com/siconos/guix-siconos &&
+  addr=https://codeberg.org/Maurice/guix-siconos/raw/branch &&
   wget -q -N $addr/channels/siconos-2021-06-08.scm && \
     guix time-machine --branch=version-1.2.0 -- \
          time-machine -C siconos-2021-06-08.scm -- \
@@ -30,7 +30,7 @@ These are some cut and paste examples for the usage of [[https://nonsmooth.grica
 
 #+name: bouncing-ball-python-computation
 #+begin_src sh :dir /tmp :compile :results output silent
-  addr=https://raw.githubusercontent.com/siconos/guix-siconos
+  addr=https://codeberg.org/Maurice/guix-siconos/raw/branch
   wget -N $addr/channels/siconos-2021-06-08.scm && \
     guix time-machine --branch=version-1.2.0 -- \
          time-machine -C siconos-2021-06-08.scm -- \
@@ -52,7 +52,7 @@ These are some cut and paste examples for the usage of [[https://nonsmooth.grica
 
 #+name: cube-computation :compile :results none
 #+begin_src sh :dir /tmp :compile :results output silent
-  addr=https://raw.githubusercontent.com/siconos/guix-siconos
+  addr=https://codeberg.org/Maurice/guix-siconos/raw/branch
   wget -N $addr/channels/siconos-2021-06-08.scm && \
     guix time-machine --branch=version-1.2.0 --\
     time-machine -C siconos-2021-06-08.scm -- \
@@ -67,7 +67,7 @@ These are some cut and paste examples for the usage of [[https://nonsmooth.grica
 
 #+name: cube-visualization
 #+begin_src sh :dir /tmp :compile :results output silent
-  addr=https://raw.githubusercontent.com/siconos/guix-siconos
+  addr=https://codeberg.org/Maurice/guix-siconos/raw/branch
   wget -N $addr/channels/siconos-2021-06-08.scm && \
   guix time-machine --branch=version-1.2.0 -- \
        time-machine -C siconos-2021-06-08.scm -- \
@@ -87,7 +87,7 @@ contactors. The computation is done with a previous version of Siconos
 
 #+name: occ_slider_crank
 #+begin_src sh :dir /tmp :compile :results output silent
-  addr=https://raw.githubusercontent.com/siconos/guix-siconos &&
+  addr=https://codeberg.org/Maurice/guix-siconos/raw/branch &&
   wget -N $addr/channels/siconos-2021-06-08.scm && \
     guix time-machine --branch=version-1.2.0 -- \
          time-machine -C siconos-2021-06-08.scm -- \
@@ -110,11 +110,12 @@ contactors. The computation is done with a previous version of Siconos
 
 #+name: slider_crank_visualization
 #+begin_src sh :dir /tmp :compile :results output silent
-  addr=https://raw.githubusercontent.com/siconos/guix-siconos &&
+  addr=https://codeberg.org/Maurice/guix-siconos/raw/branch &&
   wget -N $addr/channels/siconos-2021-06-08.scm && \
     guix time-machine --branch=version-1.2.0 -- \
          time-machine -C siconos-2021-06-08.scm -- \
          environment --pure --ad-hoc \
+         --preserve=XAUTHORITY \
          pythonocc vtk siconos@4.2 dash -- dash -c '\
          cd OCC_Examples && \
          siconos_vview --cf-scale=0.05 occ_slider_crank.hdf5'
@@ -131,7 +132,7 @@ An example with transformations on =siconos-tutorials= and =siconos=
 
 #+name: siconos-transform-build
 #+begin_src sh :dir /tmp :compile results output silent
-  addr=https://raw.githubusercontent.com/siconos/guix-siconos &&
+  addr=https://codeberg.org/Maurice/guix-siconos/raw/branch &&
   wget -q -N $addr/channels/siconos-2021-06-08.scm && \
     guix time-machine --branch=version-1.2.0 -- \
          time-machine -C siconos-2021-06-08.scm -- \
@@ -154,7 +155,7 @@ To check code before commit, there is the =--with-source= option:
 #+name: siconos-master-build
 #+begin_src sh :dir /tmp :compile :results output silent
   git clone --depth 1 git@github.com:siconos/siconos &&
-  addr=https://raw.githubusercontent.com/siconos/guix-siconos &&
+  addr=https://codeberg.org/Maurice/guix-siconos/raw/branch &&
   wget -N $addr/channels/siconos-2021-05-05.scm && \
       guix time-machine --branch=version-1.2.0 -- \
            time-machine -C siconos-2021-05-05.scm -- \
@@ -179,7 +180,7 @@ provide the necessary =inputs= packages:
 #+name: siconos-raw-build
 #+begin_src sh :dir /tmp :compile :results output silent
   git clone --depth 1 git@github.com:siconos/siconos &&
-   addr=https://raw.githubusercontent.com/siconos/guix-siconos &&
+   addr=https://codeberg.org/Maurice/guix-siconos/raw/branch &&
   wget -N $addr/channels/siconos-2021-05-05.scm && \
     guix time-machine --branch=version-1.2.0 -- \
          time-machine -C siconos-2021-05-05.scm -- \
@@ -202,7 +203,7 @@ interpreter, it is necessary to call the =siconos= script with the
 
 #+name: siconos-raw-build-bouncing-ball
 #+begin_src sh :dir /tmp :compile :results output silent
-  addr=https://raw.githubusercontent.com/siconos/guix-siconos &&
+  addr=https://codeberg.org/Maurice/guix-siconos/raw/branch &&
   wget -N $addr/channels/siconos-2021-06-08.scm && \
     guix time-machine --branch=version-1.2.0 -- \
          time-machine -C siconos-2021-06-08.scm -- \
@@ -224,7 +225,7 @@ interpreter, it is necessary to call the =siconos= script with the
 
 #+name: siconos-raw-build-bouncing-ball-python
 #+begin_src sh :dir /tmp :compile :results output silent
-  addr=https://raw.githubusercontent.com/siconos/guix-siconos &&
+  addr=https://codeberg.org/Maurice/guix-siconos/raw/branch &&
   wget -N $addr/channels/siconos-2021-06-08.scm && \
     guix time-machine --branch=version-1.2.0 -- \
          time-machine -C siconos-2021-06-08.scm -- \
@@ -242,7 +243,7 @@ interpreter, it is necessary to call the =siconos= script with the
 
 #+name: siconos-raw-build-cube-python
 #+begin_src sh :dir /tmp :compile :results output silent
-  addr=https://raw.githubusercontent.com/siconos/guix-siconos &&
+  addr=https://codeberg.org/Maurice/guix-siconos/raw/branch &&
   wget -N $addr/channels/siconos-2021-06-08.scm && \
     guix time-machine --branch=version-1.2.0 -- \
          time-machine -C siconos-2021-06-08.scm -- \
@@ -314,12 +315,12 @@ They are named with this convention:
    =siconos-<iso 8601 date of siconos commits>-<iso 8601 date of Guix commits>.scm=
 
 #+begin_src sh :dir /tmp :results value silent
-  addr=https://raw.githubusercontent.com/siconos/guix-siconos
+  addr=https://codeberg.org/Maurice/guix-siconos/raw/branch
   wget -q -N $addr/channels/siconos-now.scm
 #+end_src
 
 #+begin_src sh :dir /tmp :results value silent
-  addr=https://raw.githubusercontent.com/siconos/guix-siconos
+  addr=https://codeberg.org/Maurice/guix-siconos/raw/branch
   wget -q -N $addr/channels/siconos-2021-05-05.scm
 #+end_src
 
@@ -328,7 +329,7 @@ They are named with this convention:
 
 #+name: fix-channels-with-wget
 #+begin_src sh :dir /tmp :results raw :compile :results output silent
-  addr=https://raw.githubusercontent.com/siconos/guix-siconos
+  addr=https://codeberg.org/Maurice/guix-siconos/raw/branch
   wget -q -N $addr/channels/siconos-now.scm && \
     guix time-machine  -C siconos-now.scm -- \
          describe -f channels 2>/dev/null > \
